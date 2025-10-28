@@ -1,0 +1,273 @@
+@model WebAppMVC.ViewModels.UserDetailsViewModel
+@{
+    ViewData["Title"] = ViewBag.OperationTitle;
+}
+
+<div class="operation-header" style="background: linear-gradient(135deg, @ViewBag.BackgroundColor 0%, color-mix(in srgb, @ViewBag.BackgroundColor 80%, black) 100%);">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-action="Dashboard" asp-controller="Home" class="text-white-50">
+                                <i class="fas fa-home me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a asp-action="ApplicationOperations" asp-controller="Home" asp-route-id="1" class="text-white-50">
+                                User Management
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a asp-action="Index" asp-controller="Users" class="text-white-50">
+                                Users
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">
+                            @ViewBag.OperationTitle
+                        </li>
+                    </ol>
+                </nav>
+                
+                <h1 class="operation-title">
+                    <i class="@ViewBag.OperationIcon me-3"></i>
+                    @ViewBag.OperationTitle
+                </h1>
+                <p class="operation-description text-white-75">@ViewBag.OperationDescription</p>
+            </div>
+            <div class="col-auto">
+                <div class="btn-group">
+                    <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-warning btn-lg">
+                        <i class="fas fa-edit me-2"></i>Edit User
+                    </a>
+                    <a asp-action="Index" class="btn btn-light btn-lg">
+                        <i class="fas fa-list me-2"></i>Back to Users
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- User Profile Card -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>User Profile
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                    {
+                        <img src="@Model.ProfileImageUrl" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="Profile Picture">
+                    }
+                    else
+                    {
+                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 120px; height: 120px;">
+                            <i class="fas fa-user fa-3x text-white"></i>
+                        </div>
+                    }
+                    
+                    <h4 class="card-title">@Model.FullName</h4>
+                    <p class="text-muted">@@@Model.Username</p>
+                    
+                    <div class="mb-3">
+                        <span class="@Model.StatusBadge">@Model.StatusText</span>
+                        <span class="@Model.EmailStatusBadge ms-2">@Model.EmailStatusText</span>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i>Edit User
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.UserId" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Delete User
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Details Card -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>User Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">User ID:</label>
+                            <p class="mb-0">@Model.UserId</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Username:</label>
+                            <p class="mb-0">@Model.Username</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Email Address:</label>
+                            <p class="mb-0">
+                                <a href="mailto:@Model.Email">@Model.Email</a>
+                                @if (Model.IsEmailConfirmed)
+                                {
+                                    <i class="fas fa-check-circle text-success ms-1" title="Email Confirmed"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-exclamation-triangle text-warning ms-1" title="Email Not Confirmed"></i>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Full Name:</label>
+                            <p class="mb-0">@Model.FullName</p>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Phone Number:</label>
+                                <p class="mb-0">
+                                    <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a>
+                                </p>
+                            </div>
+                        }
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Role:</label>
+                            <p class="mb-0">
+                                <span class="badge bg-secondary">@Model.Role</span>
+                            </p>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Department))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Department:</label>
+                                <p class="mb-0">@Model.Department</p>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.EmployeeId))
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Employee ID:</label>
+                                <p class="mb-0">@Model.EmployeeId</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Status Card -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clock me-2"></i>Account Status & Timeline
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Account Status:</label>
+                            <p class="mb-0">
+                                <span class="@Model.StatusBadge">@Model.StatusText</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Email Status:</label>
+                            <p class="mb-0">
+                                <span class="@Model.EmailStatusBadge">@Model.EmailStatusText</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Account Created:</label>
+                            <p class="mb-0">
+                                <i class="fas fa-calendar-plus me-1"></i>
+                                @Model.CreatedDate.ToString("MMMM dd, yyyy 'at' hh:mm tt")
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Last Login:</label>
+                            <p class="mb-0">
+                                @if (Model.LastLoginDate.HasValue)
+                                {
+                                    <i class="fas fa-sign-in-alt me-1"></i>
+                                    @Model.LastLoginDate.Value.ToString("MMMM dd, yyyy 'at' hh:mm tt")
+                                }
+                                else
+                                {
+                                    <i class="fas fa-times me-1 text-muted"></i>
+                                    <span class="text-muted">Never logged in</span>
+                                }
+                            </p>
+                        </div>
+                        @if (Model.LastModifiedDate.HasValue)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Last Modified:</label>
+                                <p class="mb-0">
+                                    <i class="fas fa-edit me-1"></i>
+                                    @Model.LastModifiedDate.Value.ToString("MMMM dd, yyyy 'at' hh:mm tt")
+                                </p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .operation-header {
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 0;
+    }
+
+    .operation-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .operation-description {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .breadcrumb {
+        background: none;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: ">";
+        color: rgba(255,255,255,0.7);
+    }
+
+    .text-white-75 {
+        color: rgba(255,255,255,0.75) !important;
+    }
+
+    .text-white-50 {
+        color: rgba(255,255,255,0.5) !important;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border-radius: 0.5rem;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
+</style>

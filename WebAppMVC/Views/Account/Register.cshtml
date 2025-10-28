@@ -1,0 +1,153 @@
+@model WebAppMVC.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_LoginLayout";
+}
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2 class="card-title mb-0">
+                    <i class="fas fa-user-plus text-success"></i>
+                    Create Account
+                </h2>
+                <p class="text-muted mt-2">Join us today</p>
+            </div>
+            
+            <div class="card-body">
+                <form asp-action="Register" asp-controller="Account" method="post" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="FirstName" 
+                                       class="form-control" 
+                                       placeholder="First Name" 
+                                       required>
+                                <label asp-for="FirstName">
+                                    <i class="fas fa-user me-2"></i>First Name
+                                </label>
+                                <span asp-validation-for="FirstName" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="LastName" 
+                                       class="form-control" 
+                                       placeholder="Last Name" 
+                                       required>
+                                <label asp-for="LastName">
+                                    <i class="fas fa-user me-2"></i>Last Name
+                                </label>
+                                <span asp-validation-for="LastName" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Username" 
+                                   class="form-control" 
+                                   placeholder="Username" 
+                                   required>
+                            <label asp-for="Username">
+                                <i class="fas fa-at me-2"></i>Username
+                            </label>
+                            <span asp-validation-for="Username" class="invalid-feedback"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Email" 
+                                   class="form-control" 
+                                   placeholder="Email" 
+                                   type="email"
+                                   required>
+                            <label asp-for="Email">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <span asp-validation-for="Email" class="invalid-feedback"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input asp-for="Password" 
+                                   class="form-control" 
+                                   placeholder="Password" 
+                                   required>
+                            <label asp-for="Password">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <span asp-validation-for="Password" class="invalid-feedback"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-floating">
+                            <input asp-for="ConfirmPassword" 
+                                   class="form-control" 
+                                   placeholder="Confirm Password" 
+                                   required>
+                            <label asp-for="ConfirmPassword">
+                                <i class="fas fa-lock me-2"></i>Confirm Password
+                            </label>
+                            <span asp-validation-for="ConfirmPassword" class="invalid-feedback"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg register-btn">
+                            <i class="fas fa-user-plus me-2"></i>
+                            <span class="btn-text">Create Account</span>
+                            <div class="btn-loader d-none">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-0">
+                        Already have an account? 
+                        <a asp-action="Login" asp-controller="Account" class="text-decoration-none">
+                            Sign in here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Add loading animation to register button
+        $(document).ready(function() {
+            $('.register-btn').click(function() {
+                var $btn = $(this);
+                var $text = $btn.find('.btn-text');
+                var $loader = $btn.find('.btn-loader');
+                
+                $text.addClass('d-none');
+                $loader.removeClass('d-none');
+                $btn.prop('disabled', true);
+                
+                // Re-enable button after 5 seconds if form is not submitted
+                setTimeout(function() {
+                    $text.removeClass('d-none');
+                    $loader.addClass('d-none');
+                    $btn.prop('disabled', false);
+                }, 5000);
+            });
+        });
+    </script>
+}

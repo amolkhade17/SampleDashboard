@@ -1,0 +1,246 @@
+@{
+    ViewData["Title"] = ViewBag.OperationTitle;
+}
+
+<div class="operation-header" style="background: linear-gradient(135deg, @ViewBag.BackgroundColor 0%, color-mix(in srgb, @ViewBag.BackgroundColor 80%, black) 100%);">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-action="Dashboard" asp-controller="Home" class="text-white-50">
+                                <i class="fas fa-home me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a asp-action="ApplicationOperations" asp-controller="Home" asp-route-id="1" class="text-white-50">
+                                User Management
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">
+                            @ViewBag.OperationTitle
+                        </li>
+                    </ol>
+                </nav>
+                
+                <h1 class="operation-title">
+                    <i class="@ViewBag.OperationIcon me-3"></i>
+                    @ViewBag.OperationTitle
+                </h1>
+                <p class="operation-subtitle">@ViewBag.OperationDescription</p>
+            </div>
+            <div class="col-auto">
+                <div class="header-actions">
+                    <a asp-action="ApplicationOperations" asp-controller="Home" asp-route-id="1" class="btn btn-outline-light me-2">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Back to Operations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="demo-card">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="@ViewBag.OperationIcon me-2"></i>
+                            @ViewBag.OperationTitle Demo
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="demo-content">
+                            <div class="demo-icon" style="color: @ViewBag.BackgroundColor;">
+                                <i class="@ViewBag.OperationIcon"></i>
+                            </div>
+                            <h3>@ViewBag.OperationTitle</h3>
+                            <p class="lead">@ViewBag.OperationDescription</p>
+                            
+                            <div class="demo-info">
+                                <div class="alert alert-info">
+                                    <h6><i class="fas fa-info-circle me-2"></i>Demo Information</h6>
+                                    <p class="mb-2">This is a demonstration page for the <strong>@ViewBag.OperationTitle</strong> operation.</p>
+                                    <p class="mb-2">In a real implementation, this page would contain:</p>
+                                    <ul class="mb-0">
+                                        <li>Data tables with user information</li>
+                                        <li>Forms for creating/editing users</li>
+                                        <li>Search and filtering capabilities</li>
+                                        <li>Pagination for large datasets</li>
+                                        <li>Integration with stored procedures for data operations</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="demo-actions mt-4">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <a asp-action="Index" asp-controller="Users" class="btn btn-primary w-100">
+                                            <i class="fas fa-eye me-2"></i>
+                                            View Users
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a asp-action="Create" asp-controller="Users" class="btn btn-success w-100">
+                                            <i class="fas fa-plus me-2"></i>
+                                            Add User
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a asp-action="Edit" asp-controller="Users" asp-route-id="1" class="btn btn-warning w-100">
+                                            <i class="fas fa-edit me-2"></i>
+                                            Edit User
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a asp-action="Delete" asp-controller="Users" asp-route-id="1" class="btn btn-danger w-100">
+                                            <i class="fas fa-trash me-2"></i>
+                                            Delete User
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .operation-header {
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .operation-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            background: none;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .operation-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .operation-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-actions {
+            position: relative;
+            z-index: 1;
+        }
+
+        .demo-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Animation moved to pages.css */
+        }
+
+        .demo-card .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1.5rem;
+        }
+
+        .demo-content {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .demo-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-content h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .demo-content .lead {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .demo-info {
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .demo-actions .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .demo-actions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive adjustments */
+        /* Responsive styles moved to pages.css */
+            
+            .operation-header {
+                padding: 1.5rem 0;
+            }
+            
+            .header-actions {
+                margin-top: 1rem;
+            }
+            
+            .demo-content {
+                padding: 1.5rem;
+            }
+            
+            .demo-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+}
