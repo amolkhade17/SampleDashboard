@@ -1,0 +1,222 @@
+@model IEnumerable<AdminDashboard.Application.DTOs.ProductStockReportDto>
+@{
+    ViewData["Title"] = "Product Stock Report";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    var totalValue = Model.Sum(x => x.TotalValue);
+    var lowStockCount = Model.Count(x => x.StockStatus == "Low Stock" || x.StockStatus == "Out of Stock");
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center mb-4">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <h2 class="page-title mb-0">
+                    <i class="fas fa-boxes me-2 text-success"></i>Product Stock Report
+                </h2>
+                <p class="text-muted mb-0">Complete inventory analysis with stock levels and valuations</p>
+            </div>
+            <div class="col-12 col-md-6 text-md-end">
+                <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Reports
+                </a>
+                <button onclick="exportTableToExcel('productStockTable', 'Product_Stock_Report')" class="btn btn-success">
+                    <i class="fas fa-file-excel me-1"></i>Export Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card stat-card-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Products</h6>
+                        <h3 class="mb-0">@Model.Count()</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Inventory Value</h6>
+                        <h3 class="mb-0">$@totalValue.ToString("N2")</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Low Stock Items</h6>
+                        <h3 class="mb-0">@lowStockCount</h3>
+                    </div>
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-danger">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Out of Stock</h6>
+                        <h3 class="mb-0">@Model.Count(x => x.StockStatus == "Out of Stock")</h3>
+                    </div>
+                    <div class="stat-icon bg-danger">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0">
+                <i class="fas fa-table me-2 text-primary"></i>Stock Details
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="productStockTable" class="table table-hover table-striped align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product Code</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-center">Stock</th>
+                            <th class="text-end">Total Value</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Active</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong class="text-primary">@product.ProductCode</strong>
+                                </td>
+                                <td>
+                                    <i class="fas fa-cube me-2 text-muted"></i>@product.ProductName
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">@product.Category</span>
+                                </td>
+                                <td class="text-end">
+                                    <strong>$@product.UnitPrice.ToString("N2")</strong>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary fs-6">@product.StockQuantity</span>
+                                </td>
+                                <td class="text-end">
+                                    <strong class="text-success">$@product.TotalValue.ToString("N2")</strong>
+                                </td>
+                                <td class="text-center">
+                                    @if (product.StockStatus == "Out of Stock")
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times-circle me-1"></i>Out of Stock
+                                        </span>
+                                    }
+                                    else if (product.StockStatus == "Low Stock")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Low Stock
+                                        </span>
+                                    }
+                                    else if (product.StockStatus == "Normal")
+                                    {
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-check me-1"></i>Normal
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>In Stock
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (product.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-ban me-1"></i>Inactive
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="5" class="text-end">Grand Total:</th>
+                            <th class="text-end"><strong class="text-success">$@totalValue.ToString("N2")</strong></th>
+                            <th colspan="2"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#productStockTable').DataTable({
+                pageLength: 25,
+                order: [[4, 'asc']], // Sort by stock ascending
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search products..."
+                },
+                columnDefs: [
+                    { orderable: true, targets: '_all' }
+                ]
+            });
+        });
+
+        function exportTableToExcel(tableID, filename = '') {
+            var table = document.getElementById(tableID);
+            var html = table.outerHTML;
+            var url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+            var downloadLink = document.createElement("a");
+            document.body.appendChild(downloadLink);
+            
+            filename = filename ? filename + '.xls' : 'excel_data.xls';
+            downloadLink.href = url;
+            downloadLink.download = filename;
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+}

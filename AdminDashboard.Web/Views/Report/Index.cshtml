@@ -1,0 +1,191 @@
+@{
+    ViewData["Title"] = "Reports Dashboard";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center mb-4">
+            <div class="col-12">
+                <h2 class="page-title mb-0">
+                    <i class="fas fa-chart-bar me-2 text-danger"></i>Reports Dashboard
+                </h2>
+                <p class="text-muted mb-0">View comprehensive system reports and analytics</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <!-- Report Cards -->
+    <div class="row g-4 mb-4">
+        <!-- User Activity Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="report-icon bg-primary bg-gradient text-white rounded-circle p-3 me-3">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">User Activity Report</h5>
+                            <p class="text-muted small mb-0">Track user engagement</p>
+                        </div>
+                    </div>
+                    <p class="card-text mb-3">
+                        View detailed user activity metrics including total requests, pending approvals, 
+                        and success rates for each user in the system.
+                    </p>
+                    <div class="d-grid">
+                        <a asp-action="UserActivity" class="btn btn-primary">
+                            <i class="fas fa-chart-line me-2"></i>View Report
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Real-time user activity metrics
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Stock Report -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="report-icon bg-success bg-gradient text-white rounded-circle p-3 me-3">
+                            <i class="fas fa-boxes fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Product Stock Report</h5>
+                            <p class="text-muted small mb-0">Inventory analysis</p>
+                        </div>
+                    </div>
+                    <p class="card-text mb-3">
+                        Complete inventory overview with stock levels, values, and status indicators. 
+                        Identify low stock items and optimize inventory management.
+                    </p>
+                    <div class="d-grid">
+                        <a asp-action="ProductStock" class="btn btn-success">
+                            <i class="fas fa-warehouse me-2"></i>View Report
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Includes stock alerts & valuations
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maker-Checker Summary -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="report-icon bg-warning bg-gradient text-white rounded-circle p-3 me-3">
+                            <i class="fas fa-clipboard-check fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Maker-Checker Summary</h5>
+                            <p class="text-muted small mb-0">Approval workflow analytics</p>
+                        </div>
+                    </div>
+                    <p class="card-text mb-3">
+                        Comprehensive approval workflow statistics including pending, approved, and rejected 
+                        requests with approval rates and processing times.
+                    </p>
+                    <div class="d-grid">
+                        <a asp-action="MakerCheckerSummary" class="btn btn-warning text-dark">
+                            <i class="fas fa-tasks me-2"></i>View Report
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Workflow efficiency metrics
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Report Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-sync fa-2x text-primary me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1">Real-Time Data</h6>
+                                    <p class="text-muted small mb-0">
+                                        All reports display real-time data directly from the database using 
+                                        optimized stored procedures.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-table fa-2x text-success me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1">Interactive Tables</h6>
+                                    <p class="text-muted small mb-0">
+                                        DataTables integration provides sorting, searching, pagination, and 
+                                        export capabilities for all reports.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-mobile-alt fa-2x text-warning me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="mb-1">Mobile Responsive</h6>
+                                    <p class="text-muted small mb-0">
+                                        All reports are fully responsive and optimized for viewing on any 
+                                        device size.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-lift {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.report-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>

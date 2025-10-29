@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-3">
+                    <button class="btn btn-link text-white sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                    <img src="~/images/logo.png" alt="Company Logo" class="company-logo" onerror="this.style.display='none'">
+                    <span class="company-name">Admin Dashboard</span>
+                </div>
+                <div class="col-9 text-end">
+                    <div class="user-menu">
+                        <!-- Notifications -->
+                        <div class="dropdown me-3 d-inline-block">
+                            <button class="btn btn-link text-white position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell fa-lg"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    3
+                                    <span class="visually-hidden">unread notifications</span>
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
+                                <li class="dropdown-header">
+                                    <strong>Notifications</strong>
+                                    <span class="badge bg-danger ms-2">3 New</span>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item notification-item" href="#">
+                                        <div class="d-flex align-items-start">
+                                            <div class="notification-icon bg-success">
+                                                <i class="fas fa-check"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <strong>Product Approved</strong>
+                                                <p class="mb-0 small text-muted">New product has been approved</p>
+                                                <small class="text-muted">5 mins ago</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item notification-item" href="#">
+                                        <div class="d-flex align-items-start">
+                                            <div class="notification-icon bg-info">
+                                                <i class="fas fa-user-plus"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <strong>New User Request</strong>
+                                                <p class="mb-0 small text-muted">User registration pending approval</p>
+                                                <small class="text-muted">1 hour ago</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item notification-item" href="#">
+                                        <div class="d-flex align-items-start">
+                                            <div class="notification-icon bg-warning">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <strong>Low Stock Alert</strong>
+                                                <p class="mb-0 small text-muted">5 products running low on stock</p>
+                                                <small class="text-muted">2 hours ago</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-center text-primary" href="#">
+                                        <small><strong>View All Notifications</strong></small>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- User Profile Dropdown -->
+                        <div class="dropdown d-inline-block">
+                            <button class="btn btn-link text-white user-dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="d-flex align-items-center">
+                                    <div class="user-avatar me-2">
+                                        <i class="fas fa-user-circle fa-2x"></i>
+                                    </div>
+                                    <div class="user-info text-start d-none d-md-block">
+                                        <div class="user-name">@ViewBag.FullName</div>
+                                        <div class="user-role">@ViewBag.Role</div>
+                                    </div>
+                                    <i class="fas fa-chevron-down ms-2 small"></i>
+                                </div>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userDropdown">
+                                <li class="dropdown-header">
+                                    <div class="user-dropdown-header">
+                                        <div class="user-avatar-large">
+                                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                                        </div>
+                                        <div class="mt-2">
+                                            <strong>@ViewBag.FullName</strong>
+                                            <div class="small text-muted">@ViewBag.Email</div>
+                                            <span class="badge bg-danger mt-1">@ViewBag.Role</span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-user me-2 text-primary"></i> My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-cog me-2 text-secondary"></i> Account Settings
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-key me-2 text-warning"></i> Change Password
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-history me-2 text-info"></i> Activity Log
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-bell me-2 text-success"></i> Notification Preferences
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="fas fa-question-circle me-2 text-secondary"></i> Help & Support
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Auth" asp-action="Logout" method="post" class="px-3 py-2">
+                                        <button type="submit" class="btn btn-danger w-100">
+                                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 sidebar">
+                <div class="sidebar-content">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" asp-controller="Dashboard" asp-action="Index">
+                                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="User" asp-action="Index">
+                                <i class="fas fa-users me-2"></i> Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Product" asp-action="Index">
+                                <i class="fas fa-box me-2"></i> Products
+                            </a>
+                        </li>
+                        
+                        <!-- Maker-Checker Section -->
+                        <li class="nav-item mt-3">
+                            <span class="nav-link-header text-muted small">MAKER-CHECKER</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="MakerChecker" asp-action="PendingList">
+                                <i class="fas fa-clock me-2"></i> Pending Approvals
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="MakerChecker" asp-action="ApprovedList">
+                                <i class="fas fa-check-circle me-2"></i> Approved
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="MakerChecker" asp-action="RejectedList">
+                                <i class="fas fa-times-circle me-2"></i> Rejected
+                            </a>
+                        </li>
+                        
+                        <!-- Other Menu Items -->
+                        <li class="nav-item mt-3">
+                            <span class="nav-link-header text-muted small">OTHERS</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Report" asp-action="Index">
+                                <i class="fas fa-chart-bar me-2"></i> Reports
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="DataTableDemo" asp-action="Index">
+                                <i class="fas fa-table me-2"></i> DataTable Examples
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-cog me-2"></i> Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-file-alt me-2"></i> Documents
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-bell me-2"></i> Notifications
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-envelope me-2"></i> Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-shield-alt me-2"></i> Security
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

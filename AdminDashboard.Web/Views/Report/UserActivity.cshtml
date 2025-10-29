@@ -1,0 +1,211 @@
+@model IEnumerable<AdminDashboard.Application.DTOs.UserActivityReportDto>
+@{
+    ViewData["Title"] = "User Activity Report";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center mb-4">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <h2 class="page-title mb-0">
+                    <i class="fas fa-users me-2 text-primary"></i>User Activity Report
+                </h2>
+                <p class="text-muted mb-0">Comprehensive user engagement and activity metrics</p>
+            </div>
+            <div class="col-12 col-md-6 text-md-end">
+                <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Reports
+                </a>
+                <button onclick="exportTableToExcel('userActivityTable', 'User_Activity_Report')" class="btn btn-success">
+                    <i class="fas fa-file-excel me-1"></i>Export Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card stat-card-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Users</h6>
+                        <h3 class="mb-0">@Model.Count()</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Requests</h6>
+                        <h3 class="mb-0">@Model.Sum(x => x.TotalRequests)</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pending</h6>
+                        <h3 class="mb-0">@Model.Sum(x => x.PendingRequests)</h3>
+                    </div>
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Approved</h6>
+                        <h3 class="mb-0">@Model.Sum(x => x.ApprovedRequests)</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0">
+                <i class="fas fa-table me-2 text-primary"></i>User Activity Details
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="userActivityTable" class="table table-hover table-striped align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th class="text-center">Total Requests</th>
+                            <th class="text-center">Pending</th>
+                            <th class="text-center">Approved</th>
+                            <th class="text-center">Rejected</th>
+                            <th>Last Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <i class="fas fa-user-circle me-2 text-primary"></i>
+                                    <strong>@user.Username</strong>
+                                </td>
+                                <td>@user.FullName</td>
+                                <td>
+                                    <span class="badge bg-info">@user.RoleName</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary fs-6">@user.TotalRequests</span>
+                                </td>
+                                <td class="text-center">
+                                    @if (user.PendingRequests > 0)
+                                    {
+                                        <span class="badge bg-warning text-dark fs-6">@user.PendingRequests</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (user.ApprovedRequests > 0)
+                                    {
+                                        <span class="badge bg-success fs-6">@user.ApprovedRequests</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (user.RejectedRequests > 0)
+                                    {
+                                        <span class="badge bg-danger fs-6">@user.RejectedRequests</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.LastActivityDate.HasValue)
+                                    {
+                                        <small class="text-muted">
+                                            <i class="far fa-calendar me-1"></i>@user.LastActivityDate.Value.ToString("dd MMM yyyy")
+                                            <br />
+                                            <i class="far fa-clock me-1"></i>@user.LastActivityDate.Value.ToString("HH:mm")
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No activity</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#userActivityTable').DataTable({
+                pageLength: 25,
+                order: [[3, 'desc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search users..."
+                },
+                columnDefs: [
+                    { orderable: true, targets: '_all' }
+                ]
+            });
+        });
+
+        function exportTableToExcel(tableID, filename = '') {
+            var table = document.getElementById(tableID);
+            var html = table.outerHTML;
+            var url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+            var downloadLink = document.createElement("a");
+            document.body.appendChild(downloadLink);
+            
+            filename = filename ? filename + '.xls' : 'excel_data.xls';
+            downloadLink.href = url;
+            downloadLink.download = filename;
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+}

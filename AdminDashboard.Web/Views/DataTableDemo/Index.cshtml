@@ -1,0 +1,195 @@
+@{
+    ViewData["Title"] = "Professional DataTable Examples";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center mb-4">
+            <div class="col-12">
+                <h2 class="page-title mb-0">
+                    <i class="fas fa-table me-2 text-primary"></i>Professional DataTable Examples
+                </h2>
+                <p class="text-muted mb-0">Banking-grade data management interfaces with advanced features</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row g-4">
+        <!-- Banking Transactions -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="demo-icon bg-primary bg-gradient text-white rounded p-3 me-3">
+                            <i class="fas fa-exchange-alt fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Banking Transactions</h5>
+                            <p class="text-muted small mb-0">Transaction monitoring</p>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled small mb-3">
+                        <li><i class="fas fa-check text-success me-2"></i>Inline editing</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Status management</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Quick actions</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Export options</li>
+                    </ul>
+                    <a asp-action="Transactions" class="btn btn-primary w-100">
+                        <i class="fas fa-eye me-2"></i>View Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Accounts -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="demo-icon bg-success bg-gradient text-white rounded p-3 me-3">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Customer Accounts</h5>
+                            <p class="text-muted small mb-0">Account management</p>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled small mb-3">
+                        <li><i class="fas fa-check text-success me-2"></i>Bulk operations</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Advanced filters</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Row selection</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Custom actions</li>
+                    </ul>
+                    <a asp-action="Accounts" class="btn btn-success w-100">
+                        <i class="fas fa-eye me-2"></i>View Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Applications -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="demo-icon bg-warning bg-gradient text-white rounded p-3 me-3">
+                            <i class="fas fa-file-invoice-dollar fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Loan Applications</h5>
+                            <p class="text-muted small mb-0">Loan processing</p>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled small mb-3">
+                        <li><i class="fas fa-check text-success me-2"></i>Workflow status</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Comments system</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Approval flow</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Document links</li>
+                    </ul>
+                    <a asp-action="LoanApplications" class="btn btn-warning text-dark w-100">
+                        <i class="fas fa-eye me-2"></i>View Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Monitoring -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 hover-lift">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="demo-icon bg-danger bg-gradient text-white rounded p-3 me-3">
+                            <i class="fas fa-shield-alt fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5 class="card-title mb-0">Transaction Monitoring</h5>
+                            <p class="text-muted small mb-0">Fraud detection</p>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled small mb-3">
+                        <li><i class="fas fa-check text-success me-2"></i>Risk indicators</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Alert system</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Real-time updates</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Investigation tools</li>
+                    </ul>
+                    <a asp-action="Monitoring" class="btn btn-danger w-100">
+                        <i class="fas fa-eye me-2"></i>View Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Overview -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star me-2 text-warning"></i>Key Features
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="feature-item">
+                                <i class="fas fa-edit fa-2x text-primary mb-2"></i>
+                                <h6>Inline Editing</h6>
+                                <p class="text-muted small mb-0">Edit data directly in the table without modal dialogs</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="feature-item">
+                                <i class="fas fa-check-square fa-2x text-success mb-2"></i>
+                                <h6>Bulk Operations</h6>
+                                <p class="text-muted small mb-0">Select multiple rows and perform actions at once</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="feature-item">
+                                <i class="fas fa-filter fa-2x text-info mb-2"></i>
+                                <h6>Advanced Filters</h6>
+                                <p class="text-muted small mb-0">Multi-column filtering with date ranges and dropdown</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="feature-item">
+                                <i class="fas fa-file-export fa-2x text-warning mb-2"></i>
+                                <h6>Export Options</h6>
+                                <p class="text-muted small mb-0">Export to Excel, PDF, CSV with custom formatting</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-lift {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.demo-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-item {
+    text-align: center;
+    padding: 15px;
+}
+</style>

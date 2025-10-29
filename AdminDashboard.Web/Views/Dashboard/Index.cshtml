@@ -1,0 +1,209 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="dashboard-page">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview
+        </h1>
+        <p class="text-muted">Welcome back, @ViewBag.FullName</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card stat-card-primary">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">1,234</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-footer">
+                    <i class="fas fa-arrow-up text-success"></i> 12% from last month
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card stat-card-success">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">$45,678</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+                <div class="stat-footer">
+                    <i class="fas fa-arrow-up text-success"></i> 8% from last month
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card stat-card-warning">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">856</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-footer">
+                    <i class="fas fa-arrow-down text-danger"></i> 3% from last month
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card stat-card-danger">
+                <div class="stat-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">23</div>
+                    <div class="stat-label">Pending Issues</div>
+                </div>
+                <div class="stat-footer">
+                    <i class="fas fa-arrow-up text-danger"></i> 5 new today
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Tables -->
+    <div class="row">
+        <!-- Recent Activity -->
+        <div class="col-lg-8 mb-4">
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Sales Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="salesChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4 mb-4">
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/User/Create" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Add New User
+                        </a>
+                        <a href="/User" class="btn btn-outline-primary">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-file-alt me-2"></i>Generate Report
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-cog me-2"></i>System Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activities</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Activity</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fas fa-user-circle me-2"></i>John Doe</td>
+                                    <td>Created new order #12345</td>
+                                    <td>2 hours ago</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-user-circle me-2"></i>Jane Smith</td>
+                                    <td>Updated user profile</td>
+                                    <td>4 hours ago</td>
+                                    <td><span class="badge bg-info">In Progress</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-user-circle me-2"></i>Mike Johnson</td>
+                                    <td>Uploaded documents</td>
+                                    <td>1 day ago</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-user-circle me-2"></i>Sarah Williams</td>
+                                    <td>System configuration change</td>
+                                    <td>2 days ago</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Sales Chart
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Sales',
+                    data: [12000, 19000, 15000, 25000, 22000, 30000, 28000, 32000, 35000, 38000, 42000, 45000],
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

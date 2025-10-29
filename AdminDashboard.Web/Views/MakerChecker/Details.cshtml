@@ -1,0 +1,286 @@
+@model AdminDashboard.Application.DTOs.PendingRecordDto
+@{
+    ViewData["Title"] = "Approval Details";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    var parsedData = ViewBag.ParsedData as Dictionary<string, object>;
+    var currentUserId = (int)ViewBag.CurrentUserId;
+    var currentUserRole = (string)ViewBag.CurrentUserRole;
+    var canApprove = (currentUserRole == "Checker" || currentUserRole == "Admin") && 
+                     Model.Status == "Pending" && 
+                     Model.MakerId != currentUserId;
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center mb-4">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <h2 class="page-title mb-0">
+                    <i class="fas fa-file-alt me-2 text-primary"></i>Request Details
+                </h2>
+                <p class="text-muted mb-0">Review maker-checker approval request</p>
+            </div>
+            <div class="col-12 col-md-6 text-md-end">
+                <a asp-action="PendingList" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2 text-primary"></i>Request Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong><i class="fas fa-hashtag me-2 text-muted"></i>Request ID:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="badge bg-secondary">#@Model.PendingId</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong><i class="fas fa-tag me-2 text-muted"></i>Record Type:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="badge bg-info fs-6">@Model.RecordType</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong><i class="fas fa-tasks me-2 text-muted"></i>Operation:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            @if (Model.Operation == "Create")
+                            {
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-plus-circle me-1"></i>Create
+                                </span>
+                            }
+                            else if (Model.Operation == "Update")
+                            {
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <i class="fas fa-edit me-1"></i>Update
+                                </span>
+                            }
+                            else if (Model.Operation == "Delete")
+                            {
+                                <span class="badge bg-danger fs-6">
+                                    <i class="fas fa-trash me-1"></i>Delete
+                                </span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong><i class="fas fa-flag me-2 text-muted"></i>Status:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            @if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <i class="fas fa-hourglass-half me-1"></i>Pending
+                                </span>
+                            }
+                            else if (Model.Status == "Approved")
+                            {
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-check-circle me-1"></i>Approved
+                                </span>
+                            }
+                            else if (Model.Status == "Rejected")
+                            {
+                                <span class="badge bg-danger fs-6">
+                                    <i class="fas fa-times-circle me-1"></i>Rejected
+                                </span>
+                            }
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong><i class="fas fa-user me-2 text-muted"></i>Requested By:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="text-primary"><i class="fas fa-user-circle me-1"></i>@Model.MakerName</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong><i class="far fa-calendar-alt me-2 text-muted"></i>Request Date:</strong>
+                        </div>
+                        <div class="col-md-8">@Model.CreatedDate.ToString("dd MMMM yyyy HH:mm:ss")</div>
+                    </div>
+                    
+                    @if (Model.Status != "Pending")
+                    {
+                        <hr />
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong><i class="fas fa-user-check me-2 text-muted"></i>Processed By:</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <span class="text-success"><i class="fas fa-user-circle me-1"></i>@Model.CheckerName</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong><i class="far fa-calendar-check me-2 text-muted"></i>Processed Date:</strong>
+                            </div>
+                            <div class="col-md-8">@Model.AuthorizedDate?.ToString("dd MMMM yyyy HH:mm:ss")</div>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(Model.CheckerComments))
+                        {
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <strong><i class="fas fa-comment-dots me-2 text-muted"></i>Comments:</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="alert alert-info mb-0">@Model.CheckerComments</div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0"><i class="fas fa-database me-2 text-primary"></i>Record Data</h5>
+                </div>
+                <div class="card-body">
+                    @if (parsedData != null)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="30%">Field</th>
+                                        <th width="70%">Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kvp in parsedData)
+                                    {
+                                        <tr>
+                                            <td><strong>@kvp.Key</strong></td>
+                                            <td>@(kvp.Value?.ToString() ?? "<span class='text-muted'>N/A</span>")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <pre class="bg-light p-3 rounded border">@Model.RecordData</pre>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            @if (Model.Status == "Pending")
+            {
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0"><i class="fas fa-tools me-2 text-danger"></i>Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (!canApprove)
+                        {
+                            @if (Model.MakerId == currentUserId)
+                            {
+                                <div class="alert alert-warning mb-0">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Cannot Approve</strong><br />
+                                    You cannot approve your own request (Maker-Checker rule).
+                                </div>
+                            }
+                            else if (currentUserRole != "Checker" && currentUserRole != "Admin")
+                            {
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Permission Required</strong><br />
+                                    Only Checker or Admin roles can approve requests.
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <form asp-action="Approve" method="post" class="mb-3">
+                                <input type="hidden" name="PendingId" value="@Model.PendingId" />
+                                <div class="mb-3">
+                                    <label for="approveComments" class="form-label">
+                                        <i class="fas fa-comment me-1"></i>Comments (Optional)
+                                    </label>
+                                    <textarea class="form-control" id="approveComments" name="Comments" rows="3" 
+                                              placeholder="Enter approval comments..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-check-circle me-2"></i>Approve Request
+                                </button>
+                            </form>
+
+                            <div class="text-center text-muted my-3">
+                                <small>OR</small>
+                            </div>
+
+                            <form asp-action="Reject" method="post">
+                                <input type="hidden" name="PendingId" value="@Model.PendingId" />
+                                <div class="mb-3">
+                                    <label for="rejectComments" class="form-label">
+                                        <i class="fas fa-comment-slash me-1"></i>Rejection Reason 
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea class="form-control" id="rejectComments" name="Comments" rows="3" 
+                                              placeholder="Enter rejection reason..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-danger w-100" 
+                                        onclick="return confirm('Are you sure you want to reject this request?');">
+                                    <i class="fas fa-times-circle me-2"></i>Reject Request
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+                
+                <!-- Quick Info Card -->
+                <div class="card shadow-sm border-primary">
+                    <div class="card-body">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-info-circle me-2"></i>Maker-Checker Info
+                        </h6>
+                        <ul class="mb-0 small">
+                            <li class="mb-2">Maker and Checker must be different users</li>
+                            <li class="mb-2">Only Checker or Admin can approve/reject</li>
+                            <li class="mb-0">All actions are audited</li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert @(Model.Status == "Approved" ? "alert-success" : "alert-danger") mb-0">
+                            <i class="fas @(Model.Status == "Approved" ? "fa-check-circle" : "fa-times-circle") me-2 fa-2x"></i>
+                            <strong class="d-block mb-2">@Model.Status</strong>
+                            <p class="mb-0">This request has been <strong>@Model.Status.ToLower()</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

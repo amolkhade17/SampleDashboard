@@ -1,0 +1,579 @@
+@{
+    ViewData["Title"] = "Banking Transactions";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center mb-4">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <h2 class="page-title mb-0">
+                    <i class="fas fa-exchange-alt me-2 text-primary"></i>Banking Transactions
+                </h2>
+                <p class="text-muted mb-0">Real-time transaction monitoring and management</p>
+            </div>
+            <div class="col-12 col-md-6 text-md-end">
+                <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left me-1"></i>Back
+                </a>
+                <button type="button" class="btn btn-success" id="exportBtn">
+                    <i class="fas fa-file-excel me-1"></i>Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <!-- Filter Panel -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="fas fa-filter me-2"></i>Advanced Filters
+                </h6>
+                <button type="button" class="btn btn-sm btn-link" id="toggleFilters">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body" id="filterPanel">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label small">Date Range</label>
+                    <input type="date" class="form-control form-control-sm" id="startDate">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small">To</label>
+                    <input type="date" class="form-control form-control-sm" id="endDate">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Status</label>
+                    <select class="form-select form-select-sm" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Failed">Failed</option>
+                        <option value="Processing">Processing</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small">Type</label>
+                    <select class="form-select form-select-sm" id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="Deposit">Deposit</option>
+                        <option value="Withdrawal">Withdrawal</option>
+                        <option value="Transfer">Transfer</option>
+                        <option value="Payment">Payment</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-primary btn-sm w-100" id="applyFilters">
+                        <i class="fas fa-search me-1"></i>Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div class="card shadow-sm mb-3 d-none" id="bulkActionsBar">
+        <div class="card-body py-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-primary me-2" id="selectedCount">0 selected</span>
+                    <button type="button" class="btn btn-sm btn-success me-1" onclick="bulkApprove()">
+                        <i class="fas fa-check me-1"></i>Approve
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger me-1" onclick="bulkReject()">
+                        <i class="fas fa-times me-1"></i>Reject
+                    </button>
+                    <button type="button" class="btn btn-sm btn-warning me-1" onclick="bulkFlag()">
+                        <i class="fas fa-flag me-1"></i>Flag
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="clearSelection()">
+                        <i class="fas fa-times-circle me-1"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="transactionsTable" class="table table-hover align-middle banking-table">
+                    <thead>
+                        <tr>
+                            <th width="30">
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
+                            <th>Transaction ID</th>
+                            <th>Date & Time</th>
+                            <th>Customer</th>
+                            <th>Account</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Branch</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sample Data -->
+                        <tr data-id="TXN001">
+                            <td><input type="checkbox" class="form-check-input row-select"></td>
+                            <td><strong class="text-primary">TXN001</strong></td>
+                            <td>
+                                <small>2025-10-29</small><br>
+                                <small class="text-muted">14:30:25</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-primary text-white rounded-circle me-2">JD</div>
+                                    <div>
+                                        <div class="fw-bold">John Doe</div>
+                                        <small class="text-muted">john.doe@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace">****7890</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-arrow-down me-1"></i>Deposit
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-success">+$5,000.00</span>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm status-select">
+                                    <option value="Completed" selected>Completed</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="Processing">Processing</option>
+                                </select>
+                            </td>
+                            <td>Main Branch</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" onclick="viewDetails('TXN001')" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="editTransaction('TXN001')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="printReceipt('TXN001')" title="Print">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-id="TXN002">
+                            <td><input type="checkbox" class="form-check-input row-select"></td>
+                            <td><strong class="text-primary">TXN002</strong></td>
+                            <td>
+                                <small>2025-10-29</small><br>
+                                <small class="text-muted">14:15:10</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-success text-white rounded-circle me-2">SM</div>
+                                    <div>
+                                        <div class="fw-bold">Sarah Miller</div>
+                                        <small class="text-muted">sarah.m@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace">****5432</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-arrow-up me-1"></i>Withdrawal
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-danger">-$1,200.00</span>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm status-select">
+                                    <option value="Completed">Completed</option>
+                                    <option value="Pending" selected>Pending</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="Processing">Processing</option>
+                                </select>
+                            </td>
+                            <td>Downtown Branch</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" onclick="viewDetails('TXN002')" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="editTransaction('TXN002')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="printReceipt('TXN002')" title="Print">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-id="TXN003">
+                            <td><input type="checkbox" class="form-check-input row-select"></td>
+                            <td><strong class="text-primary">TXN003</strong></td>
+                            <td>
+                                <small>2025-10-29</small><br>
+                                <small class="text-muted">13:45:30</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-danger text-white rounded-circle me-2">RJ</div>
+                                    <div>
+                                        <div class="fw-bold">Robert Johnson</div>
+                                        <small class="text-muted">robert.j@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace">****8765</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-exchange-alt me-1"></i>Transfer
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-primary">$3,500.00</span>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm status-select">
+                                    <option value="Completed">Completed</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="Processing" selected>Processing</option>
+                                </select>
+                            </td>
+                            <td>East Branch</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" onclick="viewDetails('TXN003')" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="editTransaction('TXN003')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="printReceipt('TXN003')" title="Print">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-id="TXN004">
+                            <td><input type="checkbox" class="form-check-input row-select"></td>
+                            <td><strong class="text-primary">TXN004</strong></td>
+                            <td>
+                                <small>2025-10-29</small><br>
+                                <small class="text-muted">13:20:15</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-warning text-white rounded-circle me-2">ED</div>
+                                    <div>
+                                        <div class="fw-bold">Emily Davis</div>
+                                        <small class="text-muted">emily.d@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace">****3210</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-credit-card me-1"></i>Payment
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-danger">-$850.00</span>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm status-select">
+                                    <option value="Completed" selected>Completed</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Failed">Failed</option>
+                                    <option value="Processing">Processing</option>
+                                </select>
+                            </td>
+                            <td>West Branch</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" onclick="viewDetails('TXN004')" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="editTransaction('TXN004')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="printReceipt('TXN004')" title="Print">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-id="TXN005">
+                            <td><input type="checkbox" class="form-check-input row-select"></td>
+                            <td><strong class="text-primary">TXN005</strong></td>
+                            <td>
+                                <small>2025-10-29</small><br>
+                                <small class="text-muted">12:55:40</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-info text-white rounded-circle me-2">MW</div>
+                                    <div>
+                                        <div class="fw-bold">Michael Wilson</div>
+                                        <small class="text-muted">m.wilson@email.com</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace">****6789</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-arrow-down me-1"></i>Deposit
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-success">+$12,000.00</span>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm status-select">
+                                    <option value="Completed">Completed</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Failed" selected>Failed</option>
+                                    <option value="Processing">Processing</option>
+                                </select>
+                            </td>
+                            <td>Main Branch</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" onclick="viewDetails('TXN005')" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="editTransaction('TXN005')" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="printReceipt('TXN005')" title="Print">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <style>
+        .avatar-sm {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .banking-table tbody tr {
+            transition: all 0.2s;
+        }
+        
+        .banking-table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .status-select {
+            width: 130px;
+            cursor: pointer;
+        }
+        
+        .status-select option[value="Completed"] {
+            background-color: #d4edda;
+        }
+        
+        .status-select option[value="Pending"] {
+            background-color: #fff3cd;
+        }
+        
+        .status-select option[value="Failed"] {
+            background-color: #f8d7da;
+        }
+        
+        .status-select option[value="Processing"] {
+            background-color: #d1ecf1;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var table = $('#transactionsTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        className: 'btn btn-success btn-sm'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        className: 'btn btn-danger btn-sm'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        className: 'btn btn-info btn-sm'
+                    }
+                ],
+                pageLength: 25,
+                order: [[2, 'desc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search transactions..."
+                },
+                columnDefs: [
+                    { orderable: false, targets: [0, 9] }
+                ]
+            });
+
+            // Hide DataTable buttons and use custom export button
+            $('.dt-buttons').hide();
+            
+            $('#exportBtn').on('click', function() {
+                $('.dt-buttons').toggle();
+            });
+
+            // Toggle filter panel
+            $('#toggleFilters').on('click', function() {
+                $('#filterPanel').slideToggle();
+                $(this).find('i').toggleClass('fa-chevron-up fa-chevron-down');
+            });
+
+            // Select All checkbox
+            $('#selectAll').on('change', function() {
+                $('.row-select').prop('checked', this.checked);
+                updateBulkActionsBar();
+            });
+
+            // Individual row selection
+            $('.row-select').on('change', function() {
+                updateBulkActionsBar();
+            });
+
+            // Status change
+            $('.status-select').on('change', function() {
+                var row = $(this).closest('tr');
+                var txnId = row.data('id');
+                var newStatus = $(this).val();
+                
+                // Show toast notification
+                showToast('Status Updated', `Transaction ${txnId} status changed to ${newStatus}`, 'success');
+                
+                // Add visual feedback
+                row.addClass('table-success');
+                setTimeout(function() {
+                    row.removeClass('table-success');
+                }, 1000);
+            });
+        });
+
+        function updateBulkActionsBar() {
+            var checkedCount = $('.row-select:checked').length;
+            $('#selectedCount').text(checkedCount + ' selected');
+            
+            if (checkedCount > 0) {
+                $('#bulkActionsBar').removeClass('d-none');
+            } else {
+                $('#bulkActionsBar').addClass('d-none');
+            }
+        }
+
+        function clearSelection() {
+            $('.row-select').prop('checked', false);
+            $('#selectAll').prop('checked', false);
+            updateBulkActionsBar();
+        }
+
+        function bulkApprove() {
+            var count = $('.row-select:checked').length;
+            showToast('Bulk Approve', `${count} transactions approved successfully`, 'success');
+            clearSelection();
+        }
+
+        function bulkReject() {
+            var count = $('.row-select:checked').length;
+            if (confirm(`Are you sure you want to reject ${count} transactions?`)) {
+                showToast('Bulk Reject', `${count} transactions rejected`, 'warning');
+                clearSelection();
+            }
+        }
+
+        function bulkFlag() {
+            var count = $('.row-select:checked').length;
+            showToast('Bulk Flag', `${count} transactions flagged for review`, 'info');
+            clearSelection();
+        }
+
+        function viewDetails(txnId) {
+            alert('View details for transaction: ' + txnId);
+        }
+
+        function editTransaction(txnId) {
+            alert('Edit transaction: ' + txnId);
+        }
+
+        function printReceipt(txnId) {
+            alert('Print receipt for transaction: ' + txnId);
+        }
+
+        function showToast(title, message, type) {
+            var bgColor = type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : 'bg-info';
+            var toast = $('<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">' +
+                '<div class="toast show ' + bgColor + ' text-white" role="alert">' +
+                '<div class="toast-header">' +
+                '<strong class="me-auto">' + title + '</strong>' +
+                '<button type="button" class="btn-close" data-bs-dismiss="toast"></button>' +
+                '</div>' +
+                '<div class="toast-body">' + message + '</div>' +
+                '</div></div>');
+            
+            $('body').append(toast);
+            setTimeout(function() {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+}

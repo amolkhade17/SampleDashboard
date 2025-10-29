@@ -1,0 +1,323 @@
+@model IEnumerable<AdminDashboard.Application.DTOs.MakerCheckerSummaryDto>
+@{
+    ViewData["Title"] = "Maker-Checker Summary Report";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    var totalRequests = Model.Sum(x => x.TotalRequests);
+    var avgApprovalRate = Model.Any() ? Model.Average(x => x.ApprovalRate) : 0;
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center mb-4">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <h2 class="page-title mb-0">
+                    <i class="fas fa-clipboard-check me-2 text-warning"></i>Maker-Checker Summary
+                </h2>
+                <p class="text-muted mb-0">Approval workflow analytics and performance metrics</p>
+            </div>
+            <div class="col-12 col-md-6 text-md-end">
+                <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Reports
+                </a>
+                <button onclick="exportTableToExcel('makerCheckerTable', 'MakerChecker_Summary_Report')" class="btn btn-success">
+                    <i class="fas fa-file-excel me-1"></i>Export Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card stat-card-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Requests</h6>
+                        <h3 class="mb-0">@totalRequests</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Pending</h6>
+                        <h3 class="mb-0">@Model.Sum(x => x.PendingCount)</h3>
+                    </div>
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Approved</h6>
+                        <h3 class="mb-0">@Model.Sum(x => x.ApprovedCount)</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-card-danger">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Avg Approval Rate</h6>
+                        <h3 class="mb-0">@avgApprovalRate.ToString("F1")%</h3>
+                    </div>
+                    <div class="stat-icon bg-info">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Table -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0">
+                <i class="fas fa-table me-2 text-primary"></i>Workflow Summary by Record Type
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="makerCheckerTable" class="table table-hover table-striped align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Record Type</th>
+                            <th class="text-center">Total Requests</th>
+                            <th class="text-center">Pending</th>
+                            <th class="text-center">Approved</th>
+                            <th class="text-center">Rejected</th>
+                            <th class="text-center">Approval Rate</th>
+                            <th class="text-center">Avg Processing Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <i class="fas fa-tag me-2 text-primary"></i>
+                                    <strong>@item.RecordType</strong>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary fs-6">@item.TotalRequests</span>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.PendingCount > 0)
+                                    {
+                                        <span class="badge bg-warning text-dark fs-6">
+                                            <i class="fas fa-clock me-1"></i>@item.PendingCount
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.ApprovedCount > 0)
+                                    {
+                                        <span class="badge bg-success fs-6">
+                                            <i class="fas fa-check-circle me-1"></i>@item.ApprovedCount
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.RejectedCount > 0)
+                                    {
+                                        <span class="badge bg-danger fs-6">
+                                            <i class="fas fa-times-circle me-1"></i>@item.RejectedCount
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar @(item.ApprovalRate >= 75 ? "bg-success" : item.ApprovalRate >= 50 ? "bg-warning" : "bg-danger")" 
+                                             role="progressbar" 
+                                             style="width: @item.ApprovalRate%" 
+                                             aria-valuenow="@item.ApprovalRate" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            <strong>@item.ApprovalRate.ToString("F1")%</strong>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.AvgProcessingTimeHours > 0)
+                                    {
+                                        if (item.AvgProcessingTimeHours < 24)
+                                        {
+                                            <span class="badge bg-success fs-6">
+                                                <i class="far fa-clock me-1"></i>@item.AvgProcessingTimeHours hrs
+                                            </span>
+                                        }
+                                        else if (item.AvgProcessingTimeHours < 72)
+                                        {
+                                            <span class="badge bg-warning text-dark fs-6">
+                                                <i class="far fa-clock me-1"></i>@((item.AvgProcessingTimeHours / 24).ToString("F1")) days
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger fs-6">
+                                                <i class="far fa-clock me-1"></i>@((item.AvgProcessingTimeHours / 24).ToString("F1")) days
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th>Total</th>
+                            <th class="text-center">@totalRequests</th>
+                            <th class="text-center">@Model.Sum(x => x.PendingCount)</th>
+                            <th class="text-center">@Model.Sum(x => x.ApprovedCount)</th>
+                            <th class="text-center">@Model.Sum(x => x.RejectedCount)</th>
+                            <th class="text-center">@avgApprovalRate.ToString("F1")%</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Insights -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Workflow Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Approved Requests</span>
+                            <strong class="text-success">@Model.Sum(x => x.ApprovedCount) (@((totalRequests > 0 ? (Model.Sum(x => x.ApprovedCount) * 100.0 / totalRequests) : 0).ToString("F1"))%)</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: @((totalRequests > 0 ? (Model.Sum(x => x.ApprovedCount) * 100.0 / totalRequests) : 0))%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Pending Requests</span>
+                            <strong class="text-warning">@Model.Sum(x => x.PendingCount) (@((totalRequests > 0 ? (Model.Sum(x => x.PendingCount) * 100.0 / totalRequests) : 0).ToString("F1"))%)</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 style="width: @((totalRequests > 0 ? (Model.Sum(x => x.PendingCount) * 100.0 / totalRequests) : 0))%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Rejected Requests</span>
+                            <strong class="text-danger">@Model.Sum(x => x.RejectedCount) (@((totalRequests > 0 ? (Model.Sum(x => x.RejectedCount) * 100.0 / totalRequests) : 0).ToString("F1"))%)</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-danger" role="progressbar" 
+                                 style="width: @((totalRequests > 0 ? (Model.Sum(x => x.RejectedCount) * 100.0 / totalRequests) : 0))%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Performance Insights
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Overall Approval Rate:</strong> @avgApprovalRate.ToString("F1")%
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            <strong>Avg Processing Time:</strong> @(Model.Any() ? Model.Average(x => x.AvgProcessingTimeHours).ToString("F0") : "0") hours
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-chart-line text-primary me-2"></i>
+                            <strong>Total Throughput:</strong> @(Model.Sum(x => x.ApprovedCount) + Model.Sum(x => x.RejectedCount)) completed
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-hourglass-half text-info me-2"></i>
+                            <strong>Pending Backlog:</strong> @Model.Sum(x => x.PendingCount) requests
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#makerCheckerTable').DataTable({
+                pageLength: 25,
+                order: [[1, 'desc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search record types..."
+                },
+                columnDefs: [
+                    { orderable: true, targets: [0, 1, 2, 3, 4, 5, 6] }
+                ]
+            });
+        });
+
+        function exportTableToExcel(tableID, filename = '') {
+            var table = document.getElementById(tableID);
+            var html = table.outerHTML;
+            var url = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+            var downloadLink = document.createElement("a");
+            document.body.appendChild(downloadLink);
+            
+            filename = filename ? filename + '.xls' : 'excel_data.xls';
+            downloadLink.href = url;
+            downloadLink.download = filename;
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+}
