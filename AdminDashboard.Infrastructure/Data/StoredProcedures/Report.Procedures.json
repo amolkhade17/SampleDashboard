@@ -1,0 +1,30 @@
+{
+  "StoredProcedures": {
+    "Report": {
+      "GetUserActivity": {
+        "ProcedureName": "SP_GetUserActivityReport",
+        "Description": "Get user activity report",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetProductSales": {
+        "ProcedureName": "SP_GetProductSalesReport",
+        "Description": "Get product sales report",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetDashboardSummary": {
+        "ProcedureName": "SP_GetDashboardSummary",
+        "Description": "Get dashboard summary statistics",
+        "Parameters": [],
+        "ReturnType": "Single"
+      },
+      "GetMakerCheckerSummary": {
+        "ProcedureName": "SP_GetMakerCheckerSummary",
+        "Description": "Get maker-checker workflow summary",
+        "Parameters": [],
+        "ReturnType": "Single"
+      }
+    }
+  }
+}

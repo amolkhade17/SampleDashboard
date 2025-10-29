@@ -1,0 +1,91 @@
+{
+  "StoredProcedures": {
+    "User": {
+      "Authenticate": {
+        "ProcedureName": "SP_AuthenticateUser",
+        "Description": "Authenticate user with username and password",
+        "Parameters": [
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 },
+          { "Name": "@PasswordHash", "Type": "VarChar", "Size": 255 }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetById": {
+        "ProcedureName": "SP_GetUserById",
+        "Description": "Get user by ID with role information",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetByUsername": {
+        "ProcedureName": "SP_GetUserByUsername",
+        "Description": "Get user by username",
+        "Parameters": [
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetAll": {
+        "ProcedureName": "SP_GetAllUsers",
+        "Description": "Get all users with role information",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "Create": {
+        "ProcedureName": "SP_CreateUser",
+        "Description": "Create new user account",
+        "Parameters": [
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 },
+          { "Name": "@PasswordHash", "Type": "VarChar", "Size": 255 },
+          { "Name": "@Email", "Type": "VarChar", "Size": 100 },
+          { "Name": "@FullName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@RoleId", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" },
+          { "Name": "@UserId", "Type": "Int", "Direction": "Output" }
+        ],
+        "ReturnType": "NonQuery",
+        "OutputParameter": "@UserId"
+      },
+      "Update": {
+        "ProcedureName": "SP_UpdateUser",
+        "Description": "Update existing user information",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" },
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 },
+          { "Name": "@Email", "Type": "VarChar", "Size": 100 },
+          { "Name": "@FullName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@RoleId", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "Delete": {
+        "ProcedureName": "SP_DeleteUser",
+        "Description": "Delete user account",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "UpdatePassword": {
+        "ProcedureName": "SP_UpdateUserPassword",
+        "Description": "Update user password",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" },
+          { "Name": "@PasswordHash", "Type": "VarChar", "Size": 255 }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "UpdateStatus": {
+        "ProcedureName": "SP_UpdateUserStatus",
+        "Description": "Update user active status",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" }
+        ],
+        "ReturnType": "NonQuery"
+      }
+    }
+  }
+}

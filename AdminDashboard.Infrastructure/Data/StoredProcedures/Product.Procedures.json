@@ -1,0 +1,78 @@
+{
+  "StoredProcedures": {
+    "Product": {
+      "GetById": {
+        "ProcedureName": "SP_GetProductById",
+        "Description": "Get product by ID",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetAll": {
+        "ProcedureName": "SP_GetAllProducts",
+        "Description": "Get all products with optional filtering",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetByCategory": {
+        "ProcedureName": "SP_GetProductsByCategory",
+        "Description": "Get products by category",
+        "Parameters": [
+          { "Name": "@Category", "Type": "NVarChar", "Size": 50 }
+        ],
+        "ReturnType": "List"
+      },
+      "Create": {
+        "ProcedureName": "SP_CreateProduct",
+        "Description": "Create a new product",
+        "Parameters": [
+          { "Name": "@ProductCode", "Type": "NVarChar", "Size": 50 },
+          { "Name": "@ProductName", "Type": "NVarChar", "Size": 200 },
+          { "Name": "@Description", "Type": "NVarChar", "Size": 500 },
+          { "Name": "@Category", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@Price", "Type": "Decimal", "Precision": 18, "Scale": 2 },
+          { "Name": "@Stock", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" },
+          { "Name": "@CreatedBy", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@ProductId", "Type": "Int", "Direction": "Output" }
+        ],
+        "ReturnType": "NonQuery",
+        "OutputParameter": "@ProductId"
+      },
+      "Update": {
+        "ProcedureName": "SP_UpdateProduct",
+        "Description": "Update existing product",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" },
+          { "Name": "@ProductCode", "Type": "NVarChar", "Size": 50 },
+          { "Name": "@ProductName", "Type": "NVarChar", "Size": 200 },
+          { "Name": "@Description", "Type": "NVarChar", "Size": 500 },
+          { "Name": "@Category", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@Price", "Type": "Decimal", "Precision": 18, "Scale": 2 },
+          { "Name": "@Stock", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" },
+          { "Name": "@ModifiedBy", "Type": "NVarChar", "Size": 100 }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "Delete": {
+        "ProcedureName": "SP_DeleteProduct",
+        "Description": "Delete product",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "UpdateStock": {
+        "ProcedureName": "SP_UpdateProductStock",
+        "Description": "Update product stock quantity",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" },
+          { "Name": "@StockQuantity", "Type": "Int" }
+        ],
+        "ReturnType": "NonQuery"
+      }
+    }
+  }
+}

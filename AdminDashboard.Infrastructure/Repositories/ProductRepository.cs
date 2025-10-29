@@ -8,140 +8,119 @@ namespace AdminDashboard.Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    private readonly DbConnectionFactory _connectionFactory;
+    private readonly DbHelperWithConfig _dbHelper;
 
-    public ProductRepository(DbConnectionFactory connectionFactory)
+    public ProductRepository(DbHelperWithConfig dbHelper)
     {
-        _connectionFactory = connectionFactory;
+        _dbHelper = dbHelper;
     }
 
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        var products = new List<Product>();
-
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-
-        command.CommandText = "SP_GetAllProducts";
-        command.CommandType = CommandType.StoredProcedure;
-
-        connection.Open();
-        using var reader = await ((SqlCommand)command).ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
-        {
-            products.Add(MapFromReader(reader));
-        }
-
-        return products;
+        return await _dbHelper.ExecuteListAsync<Product>(
+            entity: "Product",
+            operation: "GetAll",
+            mapper: MapFromReader
+        );
     }
 
     public async Task<Product?> GetByIdAsync(int productId)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-
-        command.CommandText = "SP_GetProductById";
-        command.CommandType = CommandType.StoredProcedure;
-
-        command.Parameters.Add(new SqlParameter("@ProductId", productId));
-
-        connection.Open();
-        using var reader = await ((SqlCommand)command).ExecuteReaderAsync();
-
-        if (await reader.ReadAsync())
-        {
-            return MapFromReader(reader);
-        }
-
-        return null;
+        return await _dbHelper.ExecuteSingleAsync<Product>(
+            entity: "Product",
+            operation: "GetById",
+            mapper: MapFromReader,
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@ProductId", productId }
+            }
+        );
     }
 
     public async Task<int> CreateAsync(Product product)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-
-        command.CommandText = "SP_CreateProduct";
-        command.CommandType = CommandType.StoredProcedure;
-
-        command.Parameters.Add(new SqlParameter("@ProductCode", product.ProductCode));
-        command.Parameters.Add(new SqlParameter("@ProductName", product.ProductName));
-        command.Parameters.Add(new SqlParameter("@Description", (object?)product.Description ?? DBNull.Value));
-        command.Parameters.Add(new SqlParameter("@Category", product.Category));
-        command.Parameters.Add(new SqlParameter("@Price", product.Price));
-        command.Parameters.Add(new SqlParameter("@Stock", product.Stock));
-        command.Parameters.Add(new SqlParameter("@IsActive", product.IsActive));
-        command.Parameters.Add(new SqlParameter("@CreatedBy", product.CreatedBy));
-
-        connection.Open();
-        var result = await ((SqlCommand)command).ExecuteScalarAsync();
-
-        return Convert.ToInt32(result);
+        return await _dbHelper.ExecuteWithOutputAsync<int>(
+            entity: "Product",
+            operation: "Create",
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@ProductCode", product.ProductCode },
+                { "@ProductName", product.ProductName },
+                { "@Description", product.Description },
+                { "@Category", product.Category },
+                { "@Price", product.Price },
+                { "@Stock", product.Stock },
+                { "@IsActive", product.IsActive },
+                { "@CreatedBy", product.CreatedBy }
+            }
+        );
     }
 
     public async Task<int> UpdateAsync(Product product)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-
-        command.CommandText = "SP_UpdateProduct";
-        command.CommandType = CommandType.StoredProcedure;
-
-        command.Parameters.Add(new SqlParameter("@ProductId", product.ProductId));
-        command.Parameters.Add(new SqlParameter("@ProductCode", product.ProductCode));
-        command.Parameters.Add(new SqlParameter("@ProductName", product.ProductName));
-        command.Parameters.Add(new SqlParameter("@Description", (object?)product.Description ?? DBNull.Value));
-        command.Parameters.Add(new SqlParameter("@Category", product.Category));
-        command.Parameters.Add(new SqlParameter("@Price", product.Price));
-        command.Parameters.Add(new SqlParameter("@Stock", product.Stock));
-        command.Parameters.Add(new SqlParameter("@IsActive", product.IsActive));
-        command.Parameters.Add(new SqlParameter("@ModifiedBy", product.ModifiedBy));
-
-        connection.Open();
-        var result = await ((SqlCommand)command).ExecuteScalarAsync();
-
-        return Convert.ToInt32(result);
+        return await _dbHelper.ExecuteNonQueryAsync(
+            entity: "Product",
+            operation: "Update",
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@ProductId", product.ProductId },
+                { "@ProductCode", product.ProductCode },
+                { "@ProductName", product.ProductName },
+                { "@Description", product.Description },
+                { "@Category", product.Category },
+                { "@Price", product.Price },
+                { "@Stock", product.Stock },
+                { "@IsActive", product.IsActive },
+                { "@ModifiedBy", product.ModifiedBy }
+            }
+        );
     }
 
     public async Task<int> DeleteAsync(int productId)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-
-        command.CommandText = "SP_DeleteProduct";
-        command.CommandType = CommandType.StoredProcedure;
-
-        command.Parameters.Add(new SqlParameter("@ProductId", productId));
-
-        connection.Open();
-        var result = await ((SqlCommand)command).ExecuteScalarAsync();
-
-        return Convert.ToInt32(result);
+        return await _dbHelper.ExecuteNonQueryAsync(
+            entity: "Product",
+            operation: "Delete",
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@ProductId", productId }
+            }
+        );
     }
 
     public async Task<IEnumerable<Product>> SearchAsync(string? searchTerm, string? category)
     {
-        var products = new List<Product>();
-
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-
-        command.CommandText = "SP_SearchProducts";
-        command.CommandType = CommandType.StoredProcedure;
-
-        command.Parameters.Add(new SqlParameter("@SearchTerm", (object?)searchTerm ?? DBNull.Value));
-        command.Parameters.Add(new SqlParameter("@Category", (object?)category ?? DBNull.Value));
-
-        connection.Open();
-        using var reader = await ((SqlCommand)command).ExecuteReaderAsync();
-
-        while (await reader.ReadAsync())
+        // Use GetByCategory if only category is provided, otherwise GetAll and filter in memory
+        if (!string.IsNullOrEmpty(category) && string.IsNullOrEmpty(searchTerm))
         {
-            products.Add(MapFromReader(reader));
+            return await _dbHelper.ExecuteListAsync<Product>(
+                entity: "Product",
+                operation: "GetByCategory",
+                mapper: MapFromReader,
+                parameterValues: new Dictionary<string, object?>
+                {
+                    { "@Category", category }
+                }
+            );
         }
 
-        return products;
+        // For search term or combined search, get all and filter
+        var allProducts = await GetAllAsync();
+        
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            allProducts = allProducts.Where(p => 
+                (p.ProductName?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.ProductCode?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+        
+        if (!string.IsNullOrEmpty(category))
+        {
+            allProducts = allProducts.Where(p => 
+                p.Category?.Equals(category, StringComparison.OrdinalIgnoreCase) ?? false);
+        }
+
+        return allProducts;
     }
 
     private static Product MapFromReader(IDataReader reader)

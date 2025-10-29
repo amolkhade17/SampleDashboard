@@ -90,6 +90,86 @@ public class UserController : BaseController
         }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        try
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Map UserDto to UpdateUserDto for the form
+            var updateModel = new UpdateUserDto
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                Email = user.Email,
+                FullName = user.FullName,
+                RoleId = GetRoleIdFromName(user.RoleName),
+                IsActive = user.IsActive
+            };
+
+            ViewBag.CurrentUserRole = GetCurrentUserRole();
+            ViewBag.UserRoleName = user.RoleName; // Store role name for display
+            return View(updateModel);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Error loading user: {ex.Message}";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    private int GetRoleIdFromName(string roleName)
+    {
+        return roleName switch
+        {
+            "Admin" => 1,
+            "Maker" => 2,
+            "Checker" => 3,
+            _ => 1
+        };
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(int id, UpdateUserDto model)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.CurrentUserRole = GetCurrentUserRole();
+            return View(model);
+        }
+
+        try
+        {
+            model.UserId = id;
+            
+            // Check if user is Maker - create pending record instead
+            if (IsMaker())
+            {
+                await _userService.UpdateUserPendingAsync(model, GetCurrentUserId(), GetCurrentUserName());
+                TempData["SuccessMessage"] = "User update request submitted for approval.";
+            }
+            else
+            {
+                await _userService.UpdateUserAsync(model);
+                TempData["SuccessMessage"] = "User updated successfully.";
+            }
+            
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", $"Error updating user: {ex.Message}");
+            ViewBag.CurrentUserRole = GetCurrentUserRole();
+            return View(model);
+        }
+    }
+
     [HttpPost]
     public async Task<IActionResult> Delete(int id)
     {

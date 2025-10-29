@@ -215,7 +215,7 @@
                         }
                         else
                         {
-                            <form asp-action="Approve" method="post" class="mb-3">
+                            <form asp-action="Approve" method="post" class="mb-3" id="approveForm">
                                 <input type="hidden" name="PendingId" value="@Model.PendingId" />
                                 <div class="mb-3">
                                     <label for="approveComments" class="form-label">
@@ -224,7 +224,7 @@
                                     <textarea class="form-control" id="approveComments" name="Comments" rows="3" 
                                               placeholder="Enter approval comments..."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-success w-100">
+                                <button type="button" class="btn btn-success w-100" onclick="confirmApprove()">
                                     <i class="fas fa-check-circle me-2"></i>Approve Request
                                 </button>
                             </form>
@@ -233,7 +233,7 @@
                                 <small>OR</small>
                             </div>
 
-                            <form asp-action="Reject" method="post">
+                            <form asp-action="Reject" method="post" id="rejectForm">
                                 <input type="hidden" name="PendingId" value="@Model.PendingId" />
                                 <div class="mb-3">
                                     <label for="rejectComments" class="form-label">
@@ -243,8 +243,7 @@
                                     <textarea class="form-control" id="rejectComments" name="Comments" rows="3" 
                                               placeholder="Enter rejection reason..." required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-danger w-100" 
-                                        onclick="return confirm('Are you sure you want to reject this request?');">
+                                <button type="button" class="btn btn-danger w-100" onclick="confirmReject()">
                                     <i class="fas fa-times-circle me-2"></i>Reject Request
                                 </button>
                             </form>
@@ -284,3 +283,95 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Show success/error messages
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                confirmButtonColor: '#28a745'
+            });
+            </text>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '@TempData["ErrorMessage"]',
+                confirmButtonColor: '#dc3545'
+            });
+            </text>
+        }
+
+        function confirmApprove() {
+            Swal.fire({
+                title: 'Approve Request?',
+                html: 'Are you sure you want to <strong class="text-success">approve</strong> this request?<br><small class="text-muted">This action will execute the changes.</small>',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-check-circle me-2"></i>Yes, approve it!',
+                cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Approving request',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    document.getElementById('approveForm').submit();
+                }
+            });
+        }
+
+        function confirmReject() {
+            const rejectReason = document.getElementById('rejectComments').value;
+            
+            if (!rejectReason || rejectReason.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Rejection Reason Required!',
+                    text: 'Please enter a reason for rejection.',
+                    confirmButtonColor: '#ffc107'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Reject Request?',
+                html: `Are you sure you want to <strong class="text-danger">reject</strong> this request?<br><small class="text-muted">Reason: ${rejectReason}</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-times-circle me-2"></i>Yes, reject it!',
+                cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: 'Rejecting request',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    document.getElementById('rejectForm').submit();
+                }
+            });
+        }
+    </script>
+}

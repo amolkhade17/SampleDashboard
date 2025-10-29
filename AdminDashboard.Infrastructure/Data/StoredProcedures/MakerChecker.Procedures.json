@@ -1,0 +1,63 @@
+{
+  "StoredProcedures": {
+    "MakerChecker": {
+      "GetPendingRequests": {
+        "ProcedureName": "SP_GetAllPendingRecords",
+        "Description": "Get all pending maker-checker requests",
+        "Parameters": [
+          { "Name": "@Status", "Type": "VarChar", "Size": 20, "IsOptional": true }
+        ],
+        "ReturnType": "List"
+      },
+      "GetRequestById": {
+        "ProcedureName": "SP_GetPendingRecordById",
+        "Description": "Get maker-checker request by ID",
+        "Parameters": [
+          { "Name": "@PendingId", "Type": "Int" }
+        ],
+        "ReturnType": "Single"
+      },
+      "CreateRequest": {
+        "ProcedureName": "SP_CreatePendingRecord",
+        "Description": "Create new maker-checker request",
+        "Parameters": [
+          { "Name": "@RecordType", "Type": "VarChar", "Size": 50 },
+          { "Name": "@Operation", "Type": "VarChar", "Size": 20 },
+          { "Name": "@RecordId", "Type": "Int", "IsOptional": true },
+          { "Name": "@RecordData", "Type": "NVarChar", "Size": -1 },
+          { "Name": "@MakerId", "Type": "Int" },
+          { "Name": "@MakerName", "Type": "NVarChar", "Size": 100 }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "ApproveRequest": {
+        "ProcedureName": "SP_ApprovePendingRecord",
+        "Description": "Approve maker-checker request",
+        "Parameters": [
+          { "Name": "@PendingId", "Type": "Int" },
+          { "Name": "@CheckerId", "Type": "Int" },
+          { "Name": "@CheckerName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@CheckerComments", "Type": "NVarChar", "Size": 500, "IsOptional": true }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "RejectRequest": {
+        "ProcedureName": "SP_RejectPendingRecord",
+        "Description": "Reject maker-checker request",
+        "Parameters": [
+          { "Name": "@PendingId", "Type": "Int" },
+          { "Name": "@CheckerId", "Type": "Int" },
+          { "Name": "@CheckerName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@CheckerComments", "Type": "NVarChar", "Size": 500 }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "GetSummary": {
+        "ProcedureName": "SP_GetMakerCheckerSummary",
+        "Description": "Get maker-checker statistics for dashboard",
+        "Parameters": [],
+        "ReturnType": "List"
+      }
+    }
+  }
+}

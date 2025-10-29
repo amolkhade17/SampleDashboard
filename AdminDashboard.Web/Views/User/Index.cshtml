@@ -48,9 +48,9 @@
                                 }
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="fas fa-edit"></i>
-                                </button>
+                                </a>
                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(@user.UserId)" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -64,26 +64,72 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function deleteUser(userId) {
-            if (confirm('Are you sure you want to delete this user?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/User/Delete/' + userId;
-
-                const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]');
-                if (csrfToken) {
-                    form.appendChild(csrfToken.cloneNode());
-                }
-
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-
-        // Initialize DataTable if you want advanced features
         $(document).ready(function() {
-            // You can add DataTables plugin here for sorting, searching, pagination
+            // Show success message if exists
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonColor: '#28a745'
+                });
+                </text>
+            }
+
+            // Show error message if exists
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonColor: '#dc3545'
+                });
+                </text>
+            }
         });
+
+        function deleteUser(userId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Submit form
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/User/Delete/' + userId;
+
+                    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]');
+                    if (csrfToken) {
+                        form.appendChild(csrfToken.cloneNode());
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
     </script>
 }

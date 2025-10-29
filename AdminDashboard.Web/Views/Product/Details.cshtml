@@ -185,11 +185,57 @@
 </form>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Show success/error messages
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                confirmButtonColor: '#28a745',
+                timer: 3000
+            });
+            </text>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '@TempData["ErrorMessage"]',
+                confirmButtonColor: '#dc3545'
+            });
+            </text>
+        }
+
         function confirmDelete() {
-            if (confirm('Are you sure you want to delete product "@Model.ProductName"? This action cannot be undone.')) {
-                document.getElementById('deleteForm').submit();
-            }
+            Swal.fire({
+                title: 'Delete Product?',
+                html: 'Are you sure you want to delete <strong>"@Model.ProductName"</strong>?<br><small class="text-muted">This action cannot be undone!</small>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash me-2"></i>Yes, delete it!',
+                cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    document.getElementById('deleteForm').submit();
+                }
+            });
         }
     </script>
 

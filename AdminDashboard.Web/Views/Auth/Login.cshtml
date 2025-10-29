@@ -18,24 +18,138 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
             min-height: 100vh;
             display: flex;
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Elegant Background Pattern */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(220, 53, 69, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(220, 53, 69, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(220, 53, 69, 0.02) 0%, transparent 50%);
+            z-index: -2;
+        }
+
+        @@keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Geometric Shapes */
+        .shape {
+            position: absolute;
+            opacity: 0.06;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, rgba(220, 53, 69, 0.2), transparent);
+            border-radius: 50%;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.15), transparent);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 5s;
+        }
+
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(225deg, rgba(220, 53, 69, 0.1), transparent);
+            border-radius: 50%;
+            top: 50%;
+            right: 10%;
+            animation-delay: 10s;
+        }
+
+        .shape-4 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(315deg, rgba(220, 53, 69, 0.12), transparent);
+            border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+            bottom: 20%;
+            left: 5%;
+            animation-delay: 7s;
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-40px) rotate(-5deg); }
+            75% { transform: translateY(-20px) rotate(3deg); }
+        }
+
+        /* Particle Effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(220, 53, 69, 0.15);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+
+        @@keyframes rise {
+            0% {
+                bottom: -100px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 110%;
+                opacity: 0;
+            }
         }
 
         .login-container {
             max-width: 450px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
 
         .login-card {
-            background: white;
+            background: #ffffff;
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(220, 53, 69, 0.08), 0 2px 8px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             animation: slideUp 0.6s ease-out;
+            border: 1px solid rgba(220, 53, 69, 0.1);
         }
 
         @@keyframes slideUp {
@@ -50,21 +164,43 @@
         }
 
         .login-header {
-            background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
             color: white;
             padding: 40px 30px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
         }
 
         .login-header h2 {
             margin: 0;
             font-weight: 700;
             font-size: 28px;
+            position: relative;
+            z-index: 1;
         }
 
         .login-header p {
             margin: 10px 0 0 0;
             opacity: 0.9;
+            position: relative;
+            z-index: 1;
         }
 
         .login-body {
@@ -127,6 +263,8 @@
 
         .logo-container {
             margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
 
         .logo-placeholder {
@@ -138,10 +276,36 @@
             align-items: center;
             justify-content: center;
             font-size: 36px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @@keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
     </style>
 </head>
 <body>
+    <!-- Floating Geometric Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+
+    <!-- Particle Effect -->
+    <div class="particles">
+        <div class="particle" style="width: 10px; height: 10px; left: 10%; animation-delay: 0s; animation-duration: 15s;"></div>
+        <div class="particle" style="width: 8px; height: 8px; left: 20%; animation-delay: 2s; animation-duration: 12s;"></div>
+        <div class="particle" style="width: 12px; height: 12px; left: 30%; animation-delay: 4s; animation-duration: 18s;"></div>
+        <div class="particle" style="width: 6px; height: 6px; left: 40%; animation-delay: 1s; animation-duration: 14s;"></div>
+        <div class="particle" style="width: 10px; height: 10px; left: 50%; animation-delay: 5s; animation-duration: 16s;"></div>
+        <div class="particle" style="width: 8px; height: 8px; left: 60%; animation-delay: 3s; animation-duration: 13s;"></div>
+        <div class="particle" style="width: 14px; height: 14px; left: 70%; animation-delay: 6s; animation-duration: 17s;"></div>
+        <div class="particle" style="width: 9px; height: 9px; left: 80%; animation-delay: 2.5s; animation-duration: 15s;"></div>
+        <div class="particle" style="width: 11px; height: 11px; left: 90%; animation-delay: 4.5s; animation-duration: 19s;"></div>
+    </div>
+    
     <div class="container">
         <div class="login-container">
             <div class="login-card">

@@ -16,6 +16,8 @@ public interface IUserService
     Task<int> CreateUserPendingAsync(CreateUserDto dto, int makerId, string makerName);
     Task<int> UpdateUserPendingAsync(UpdateUserDto dto, int makerId, string makerName);
     Task<int> DeleteUserPendingAsync(int userId, int makerId, string makerName);
+    Task<bool> ActivateUserAsync(int userId);
+    Task<bool> DeactivateUserAsync(int userId);
 }
 
 public class UserService : IUserService
@@ -191,5 +193,25 @@ public class UserService : IUserService
         };
 
         return await _pendingRecordRepository.CreateAsync(pendingRecord);
+    }
+
+    public async Task<bool> ActivateUserAsync(int userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        user.IsActive = true;
+        var result = await _userRepository.UpdateAsync(user);
+        return result > 0;
+    }
+
+    public async Task<bool> DeactivateUserAsync(int userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null) return false;
+
+        user.IsActive = false;
+        var result = await _userRepository.UpdateAsync(user);
+        return result > 0;
     }
 }

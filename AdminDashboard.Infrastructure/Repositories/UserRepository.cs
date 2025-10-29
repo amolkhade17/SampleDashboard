@@ -8,150 +8,106 @@ namespace AdminDashboard.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly DbConnectionFactory _connectionFactory;
+    private readonly DbHelperWithConfig _dbHelper;
 
-    public UserRepository(DbConnectionFactory connectionFactory)
+    public UserRepository(DbHelperWithConfig dbHelper)
     {
-        _connectionFactory = connectionFactory;
+        _dbHelper = dbHelper;
     }
 
     public async Task<User?> AuthenticateAsync(string username, string passwordHash)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        
-        command.CommandText = "SP_AuthenticateUser";
-        command.CommandType = CommandType.StoredProcedure;
-        
-        command.Parameters.Add(new SqlParameter("@Username", username));
-        command.Parameters.Add(new SqlParameter("@PasswordHash", passwordHash));
-        
-        connection.Open();
-        using var reader = await ((SqlCommand)command).ExecuteReaderAsync();
-        
-        if (await reader.ReadAsync())
-        {
-            return MapUserFromReader(reader);
-        }
-        
-        return null;
+        return await _dbHelper.ExecuteSingleAsync<User>(
+            entity: "User",
+            operation: "Authenticate",
+            mapper: MapUserFromReader,
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@Username", username },
+                { "@PasswordHash", passwordHash }
+            }
+        );
     }
 
     public async Task<User?> GetByIdAsync(int userId)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        
-        command.CommandText = "SP_GetUserById";
-        command.CommandType = CommandType.StoredProcedure;
-        
-        command.Parameters.Add(new SqlParameter("@UserId", userId));
-        
-        connection.Open();
-        using var reader = await ((SqlCommand)command).ExecuteReaderAsync();
-        
-        if (await reader.ReadAsync())
-        {
-            return MapUserFromReader(reader);
-        }
-        
-        return null;
+        return await _dbHelper.ExecuteSingleAsync<User>(
+            entity: "User",
+            operation: "GetById",
+            mapper: MapUserFromReader,
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@UserId", userId }
+            }
+        );
     }
 
     public async Task<IEnumerable<User>> GetAllAsync()
     {
-        var users = new List<User>();
-        
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        
-        command.CommandText = "SP_GetAllUsers";
-        command.CommandType = CommandType.StoredProcedure;
-        
-        connection.Open();
-        using var reader = await ((SqlCommand)command).ExecuteReaderAsync();
-        
-        while (await reader.ReadAsync())
-        {
-            users.Add(MapUserFromReader(reader));
-        }
-        
-        return users;
+        return await _dbHelper.ExecuteListAsync<User>(
+            entity: "User",
+            operation: "GetAll",
+            mapper: MapUserFromReader
+        );
     }
 
     public async Task<int> CreateAsync(User user)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        
-        command.CommandText = "SP_CreateUser";
-        command.CommandType = CommandType.StoredProcedure;
-        
-        command.Parameters.Add(new SqlParameter("@Username", user.Username));
-        command.Parameters.Add(new SqlParameter("@PasswordHash", user.PasswordHash));
-        command.Parameters.Add(new SqlParameter("@Email", user.Email));
-        command.Parameters.Add(new SqlParameter("@FullName", user.FullName));
-        command.Parameters.Add(new SqlParameter("@RoleId", user.RoleId));
-        command.Parameters.Add(new SqlParameter("@IsActive", user.IsActive));
-        
-        connection.Open();
-        var result = await ((SqlCommand)command).ExecuteScalarAsync();
-        
-        return Convert.ToInt32(result);
+        return await _dbHelper.ExecuteWithOutputAsync<int>(
+            entity: "User",
+            operation: "Create",
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@Username", user.Username },
+                { "@PasswordHash", user.PasswordHash },
+                { "@Email", user.Email },
+                { "@FullName", user.FullName },
+                { "@RoleId", user.RoleId },
+                { "@IsActive", user.IsActive }
+            }
+        );
     }
 
     public async Task<int> UpdateAsync(User user)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        
-        command.CommandText = "SP_UpdateUser";
-        command.CommandType = CommandType.StoredProcedure;
-        
-        command.Parameters.Add(new SqlParameter("@UserId", user.UserId));
-        command.Parameters.Add(new SqlParameter("@Username", user.Username));
-        command.Parameters.Add(new SqlParameter("@Email", user.Email));
-        command.Parameters.Add(new SqlParameter("@FullName", user.FullName));
-        command.Parameters.Add(new SqlParameter("@RoleId", user.RoleId));
-        command.Parameters.Add(new SqlParameter("@IsActive", user.IsActive));
-        
-        connection.Open();
-        var result = await ((SqlCommand)command).ExecuteScalarAsync();
-        
-        return Convert.ToInt32(result);
+        return await _dbHelper.ExecuteNonQueryAsync(
+            entity: "User",
+            operation: "Update",
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@UserId", user.UserId },
+                { "@Username", user.Username },
+                { "@Email", user.Email },
+                { "@FullName", user.FullName },
+                { "@RoleId", user.RoleId },
+                { "@IsActive", user.IsActive }
+            }
+        );
     }
 
     public async Task<int> DeleteAsync(int userId)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        
-        command.CommandText = "SP_DeleteUser";
-        command.CommandType = CommandType.StoredProcedure;
-        
-        command.Parameters.Add(new SqlParameter("@UserId", userId));
-        
-        connection.Open();
-        var result = await ((SqlCommand)command).ExecuteScalarAsync();
-        
-        return Convert.ToInt32(result);
+        return await _dbHelper.ExecuteNonQueryAsync(
+            entity: "User",
+            operation: "Delete",
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@UserId", userId }
+            }
+        );
     }
 
     public async Task<int> ChangePasswordAsync(int userId, string newPasswordHash)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        using var command = connection.CreateCommand();
-        
-        command.CommandText = "SP_ChangePassword";
-        command.CommandType = CommandType.StoredProcedure;
-        
-        command.Parameters.Add(new SqlParameter("@UserId", userId));
-        command.Parameters.Add(new SqlParameter("@NewPasswordHash", newPasswordHash));
-        
-        connection.Open();
-        var result = await ((SqlCommand)command).ExecuteScalarAsync();
-        
-        return Convert.ToInt32(result);
+        return await _dbHelper.ExecuteNonQueryAsync(
+            entity: "User",
+            operation: "UpdatePassword",
+            parameterValues: new Dictionary<string, object?>
+            {
+                { "@UserId", userId },
+                { "@PasswordHash", newPasswordHash }
+            }
+        );
     }
 
     private static User MapUserFromReader(IDataReader reader)

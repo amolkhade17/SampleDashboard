@@ -1,0 +1,278 @@
+{
+  "StoredProcedures": {
+    "User": {
+      "Authenticate": {
+        "ProcedureName": "SP_AuthenticateUser",
+        "Description": "Authenticate user with username and password",
+        "Parameters": [
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 },
+          { "Name": "@PasswordHash", "Type": "VarChar", "Size": 255 }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetById": {
+        "ProcedureName": "SP_GetUserById",
+        "Description": "Get user by ID",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetByUsername": {
+        "ProcedureName": "SP_GetUserByUsername",
+        "Description": "Get user by username",
+        "Parameters": [
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetAll": {
+        "ProcedureName": "SP_GetAllUsers",
+        "Description": "Get all users",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "Create": {
+        "ProcedureName": "SP_CreateUser",
+        "Description": "Create new user",
+        "Parameters": [
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 },
+          { "Name": "@PasswordHash", "Type": "VarChar", "Size": 255 },
+          { "Name": "@Email", "Type": "VarChar", "Size": 100 },
+          { "Name": "@FullName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@RoleId", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" },
+          { "Name": "@UserId", "Type": "Int", "Direction": "Output" }
+        ],
+        "ReturnType": "NonQuery",
+        "OutputParameter": "@UserId"
+      },
+      "Update": {
+        "ProcedureName": "SP_UpdateUser",
+        "Description": "Update existing user",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" },
+          { "Name": "@Username", "Type": "VarChar", "Size": 50 },
+          { "Name": "@Email", "Type": "VarChar", "Size": 100 },
+          { "Name": "@FullName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@RoleId", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "Delete": {
+        "ProcedureName": "SP_DeleteUser",
+        "Description": "Delete user",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "UpdatePassword": {
+        "ProcedureName": "SP_UpdateUserPassword",
+        "Description": "Update user password",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" },
+          { "Name": "@PasswordHash", "Type": "VarChar", "Size": 255 }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "UpdateStatus": {
+        "ProcedureName": "SP_UpdateUserStatus",
+        "Description": "Update user active status",
+        "Parameters": [
+          { "Name": "@UserId", "Type": "Int" },
+          { "Name": "@IsActive", "Type": "Bit" }
+        ],
+        "ReturnType": "NonQuery"
+      }
+    },
+    "Product": {
+      "GetById": {
+        "ProcedureName": "SP_GetProductById",
+        "Description": "Get product by ID",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" }
+        ],
+        "ReturnType": "Single"
+      },
+      "GetAll": {
+        "ProcedureName": "SP_GetAllProducts",
+        "Description": "Get all products",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "Create": {
+        "ProcedureName": "SP_CreateProduct",
+        "Description": "Create new product",
+        "Parameters": [
+          { "Name": "@ProductName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@Description", "Type": "NVarChar", "Size": 500 },
+          { "Name": "@Price", "Type": "Decimal" },
+          { "Name": "@Stock", "Type": "Int" },
+          { "Name": "@CategoryId", "Type": "Int" },
+          { "Name": "@ProductId", "Type": "Int", "Direction": "Output" }
+        ],
+        "ReturnType": "NonQuery",
+        "OutputParameter": "@ProductId"
+      },
+      "Update": {
+        "ProcedureName": "SP_UpdateProduct",
+        "Description": "Update existing product",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" },
+          { "Name": "@ProductName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@Description", "Type": "NVarChar", "Size": 500 },
+          { "Name": "@Price", "Type": "Decimal" },
+          { "Name": "@Stock", "Type": "Int" },
+          { "Name": "@CategoryId", "Type": "Int" }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "Delete": {
+        "ProcedureName": "SP_DeleteProduct",
+        "Description": "Delete product",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "UpdateStock": {
+        "ProcedureName": "SP_UpdateProductStock",
+        "Description": "Update product stock",
+        "Parameters": [
+          { "Name": "@ProductId", "Type": "Int" },
+          { "Name": "@Stock", "Type": "Int" }
+        ],
+        "ReturnType": "NonQuery"
+      }
+    },
+    "Category": {
+      "GetAll": {
+        "ProcedureName": "SP_GetAllCategories",
+        "Description": "Get all categories",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "Create": {
+        "ProcedureName": "SP_CreateCategory",
+        "Description": "Create new category",
+        "Parameters": [
+          { "Name": "@CategoryName", "Type": "NVarChar", "Size": 50 },
+          { "Name": "@CategoryId", "Type": "Int", "Direction": "Output" }
+        ],
+        "ReturnType": "NonQuery",
+        "OutputParameter": "@CategoryId"
+      }
+    },
+    "MakerChecker": {
+      "GetPendingRecords": {
+        "ProcedureName": "SP_GetPendingRecords",
+        "Description": "Get all pending records",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetApprovedRecords": {
+        "ProcedureName": "SP_GetApprovedRecords",
+        "Description": "Get all approved records",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetRejectedRecords": {
+        "ProcedureName": "SP_GetRejectedRecords",
+        "Description": "Get all rejected records",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetRecordById": {
+        "ProcedureName": "SP_GetPendingRecordById",
+        "Description": "Get pending record by ID",
+        "Parameters": [
+          { "Name": "@RecordId", "Type": "Int" }
+        ],
+        "ReturnType": "Single"
+      },
+      "CreatePendingRecord": {
+        "ProcedureName": "SP_CreatePendingRecord",
+        "Description": "Create new pending record",
+        "Parameters": [
+          { "Name": "@RecordType", "Type": "VarChar", "Size": 50 },
+          { "Name": "@Operation", "Type": "VarChar", "Size": 50 },
+          { "Name": "@RecordData", "Type": "NVarChar", "Size": -1 },
+          { "Name": "@Status", "Type": "VarChar", "Size": 50 },
+          { "Name": "@MakerId", "Type": "Int" },
+          { "Name": "@MakerName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@RecordId", "Type": "Int", "Direction": "Output" }
+        ],
+        "ReturnType": "NonQuery",
+        "OutputParameter": "@RecordId"
+      },
+      "ApproveRecord": {
+        "ProcedureName": "SP_ApproveRecord",
+        "Description": "Approve a pending record",
+        "Parameters": [
+          { "Name": "@RecordId", "Type": "Int" },
+          { "Name": "@CheckerId", "Type": "Int" },
+          { "Name": "@CheckerName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@CheckerComments", "Type": "NVarChar", "Size": 500 }
+        ],
+        "ReturnType": "NonQuery"
+      },
+      "RejectRecord": {
+        "ProcedureName": "SP_RejectRecord",
+        "Description": "Reject a pending record",
+        "Parameters": [
+          { "Name": "@RecordId", "Type": "Int" },
+          { "Name": "@CheckerId", "Type": "Int" },
+          { "Name": "@CheckerName", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@CheckerComments", "Type": "NVarChar", "Size": 500 }
+        ],
+        "ReturnType": "NonQuery"
+      }
+    },
+    "Dashboard": {
+      "GetCounts": {
+        "ProcedureName": "SP_GetDashboardCounts",
+        "Description": "Get dashboard statistics",
+        "Parameters": [],
+        "ReturnType": "Single"
+      },
+      "GetRecentActivities": {
+        "ProcedureName": "SP_GetRecentActivities",
+        "Description": "Get recent activities",
+        "Parameters": [
+          { "Name": "@TopCount", "Type": "Int" }
+        ],
+        "ReturnType": "List"
+      }
+    },
+    "Report": {
+      "GetUserActivity": {
+        "ProcedureName": "SP_GetUserActivityReport",
+        "Description": "Get user activity report",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetProductStock": {
+        "ProcedureName": "SP_GetProductStockReport",
+        "Description": "Get product stock report",
+        "Parameters": [],
+        "ReturnType": "List"
+      },
+      "GetMakerCheckerSummary": {
+        "ProcedureName": "SP_GetMakerCheckerSummary",
+        "Description": "Get maker checker summary report",
+        "Parameters": [],
+        "ReturnType": "List"
+      }
+    },
+    "Role": {
+      "GetAll": {
+        "ProcedureName": "SP_GetAllRoles",
+        "Description": "Get all roles",
+        "Parameters": [],
+        "ReturnType": "List"
+      }
+    }
+  }
+}
