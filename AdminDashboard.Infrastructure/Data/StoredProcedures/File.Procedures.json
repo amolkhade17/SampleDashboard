@@ -1,0 +1,53 @@
+{
+  "StoredProcedures": {
+    "File": {
+      "Create": {
+        "ProcedureName": "SP_CreateUploadedFile",
+        "Parameters": [
+          { "Name": "@FileName", "Type": "NVarChar", "Size": 255 },
+          { "Name": "@OriginalFileName", "Type": "NVarChar", "Size": 255 },
+          { "Name": "@FilePath", "Type": "NVarChar", "Size": 500 },
+          { "Name": "@FileSize", "Type": "BigInt" },
+          { "Name": "@FileExtension", "Type": "NVarChar", "Size": 50 },
+          { "Name": "@MimeType", "Type": "NVarChar", "Size": 100 },
+          { "Name": "@UploadedBy", "Type": "NVarChar", "Size": 100 }
+        ]
+      },
+      "GetAll": {
+        "ProcedureName": "SP_GetAllUploadedFiles",
+        "Parameters": []
+      },
+      "GetById": {
+        "ProcedureName": "SP_GetUploadedFileById",
+        "Parameters": [
+          { "Name": "@FileId", "Type": "Int" }
+        ]
+      },
+      "GetByFileName": {
+        "ProcedureName": "SP_GetUploadedFileByFileName",
+        "Parameters": [
+          { "Name": "@FileName", "Type": "NVarChar", "Size": 255 }
+        ]
+      },
+      "Update": {
+        "ProcedureName": "SP_UpdateUploadedFile",
+        "Parameters": [
+          { "Name": "@FileId", "Type": "Int" },
+          { "Name": "@FileName", "Type": "NVarChar", "Size": 255 },
+          { "Name": "@ModifiedBy", "Type": "NVarChar", "Size": 100 }
+        ]
+      },
+      "Delete": {
+        "ProcedureName": "SP_DeleteUploadedFile",
+        "Parameters": [
+          { "Name": "@FileName", "Type": "NVarChar", "Size": 255 },
+          { "Name": "@DeletedBy", "Type": "NVarChar", "Size": 100 }
+        ]
+      },
+      "GetStatistics": {
+        "ProcedureName": "SP_GetFileStatistics",
+        "Parameters": []
+      }
+    }
+  }
+}

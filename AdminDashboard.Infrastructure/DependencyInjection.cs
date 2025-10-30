@@ -32,6 +32,7 @@ public static class DependencyInjection
         services.AddScoped<IPendingRecordRepository, PendingRecordRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IReportRepository, ReportRepository>();
+        services.AddScoped<IUploadedFileRepository, UploadedFileRepository>();
         
         // Option 2: Switch to refactored repositories with constants
         // services.AddScoped<IUserRepository, UserRepositoryRefactored>();

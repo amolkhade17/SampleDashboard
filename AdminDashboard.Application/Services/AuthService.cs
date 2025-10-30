@@ -40,6 +40,17 @@ public class AuthService : IAuthService
 
         try
         {
+            // Validate dependencies
+            if (_passwordHasher == null)
+            {
+                throw new InvalidOperationException("Password hasher service is not initialized. Please ensure IPasswordHasher is registered in DI container.");
+            }
+
+            if (_jwtTokenService == null)
+            {
+                throw new InvalidOperationException("JWT token service is not initialized. Please ensure IJwtTokenService is registered in DI container.");
+            }
+
             // Get user by username first
             var users = await _userRepository.GetAllAsync();
             Console.WriteLine($"[DEBUG] Total users in DB: {users.Count()}");
@@ -57,11 +68,21 @@ public class AuthService : IAuthService
                 };
             }
 
+            // Validate user has password hash
+            if (string.IsNullOrEmpty(user.PasswordHash))
+            {
+                return new LoginResponseDto
+                {
+                    Success = false,
+                    Message = "User account is not properly configured. Please contact administrator."
+                };
+            }
+
             Console.WriteLine($"[DEBUG] User PasswordHash length: {user.PasswordHash?.Length ?? 0}");
             Console.WriteLine($"[DEBUG] Input password: {request.Password}");
             
             // Verify password
-            bool passwordValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
+            bool passwordValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash!);
             Console.WriteLine($"[DEBUG] Password verification result: {passwordValid}");
             
             if (!passwordValid)

@@ -4,14 +4,16 @@ using AdminDashboard.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-var builder = WebApplication.CreateBuilder(args);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddControllersWithViews();
+    // Add services to the container
+    builder.Services.AddControllersWithViews();
 
-// Add Application and Infrastructure layers
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+    // Add Application and Infrastructure layers
+    builder.Services.AddApplication();
+    builder.Services.AddInfrastructure();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -49,6 +51,28 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Token = token;
             }
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            // Skip the default logic
+            context.HandleResponse();
+            
+            // Check if this is a browser request (not API)
+            var acceptHeader = context.Request.Headers["Accept"].ToString();
+            if (acceptHeader.Contains("text/html"))
+            {
+                // Redirect to login page for browser requests
+                context.Response.Redirect($"/Auth/Login?ReturnUrl={Uri.EscapeDataString(context.Request.Path + context.Request.QueryString)}");
+            }
+            else
+            {
+                // Return 401 for API requests
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync("{\"error\":\"Unauthorized\"}");
+            }
+            
             return Task.CompletedTask;
         }
     };
@@ -89,3 +113,16 @@ app.MapControllerRoute(
     pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"❌ FATAL ERROR DURING STARTUP:");
+    Console.WriteLine($"   Message: {ex.Message}");
+    Console.WriteLine($"   Type: {ex.GetType().Name}");
+    Console.WriteLine($"   StackTrace: {ex.StackTrace}");
+    if (ex.InnerException != null)
+    {
+        Console.WriteLine($"   Inner Exception: {ex.InnerException.Message}");
+    }
+    throw;
+}

@@ -1,5 +1,90 @@
 # Deployment Guide
 
+## ⚠️ Troubleshooting: "Login Error:hashpassword" Issue
+
+**If you see "Login Error:hashpassword" when deploying to a server or another system**, this typically indicates one of the following issues:
+
+### Quick Fix Steps:
+
+1. **Verify IPasswordHasher Service Registration**
+   - Ensure `AdminDashboard.Application.dll` is deployed
+   - Check `Program.cs` calls `builder.Services.AddApplication()`
+
+2. **Check Password Hash Format in Database**
+   ```sql
+   SELECT Username, LEN(PasswordHash) AS HashLength FROM Users
+   ```
+   - Expected: HashLength should be **64** characters
+   - If different, passwords need to be regenerated
+
+3. **Regenerate Admin Password Hash**
+   
+   Run this in the `HashGenerator` project or any C# console:
+   ```csharp
+   using System.Security.Cryptography;
+   
+   string password = "Admin@123";
+   const int SaltSize = 16, HashSize = 32, Iterations = 10000;
+   
+   using var rng = RandomNumberGenerator.Create();
+   var salt = new byte[SaltSize];
+   rng.GetBytes(salt);
+   
+   using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256);
+   var hash = pbkdf2.GetBytes(HashSize);
+   
+   var hashBytes = new byte[SaltSize + HashSize];
+   Array.Copy(salt, 0, hashBytes, 0, SaltSize);
+   Array.Copy(hash, 0, hashBytes, SaltSize, HashSize);
+   
+   Console.WriteLine(Convert.ToBase64String(hashBytes));
+   ```
+   
+   Then update database:
+   ```sql
+   UPDATE Users 
+   SET PasswordHash = 'YOUR_GENERATED_64_CHAR_HASH'
+   WHERE Username = 'admin'
+   ```
+
+4. **Verify appsettings.json is Deployed**
+   - Connection string must point to correct SQL Server
+   - JWT section must be complete with SecretKey, Issuer, Audience
+
+5. **Check DLL Files are Present**
+   Required files in deployment folder:
+   - `AdminDashboard.Web.dll`
+   - `AdminDashboard.Application.dll` ← **Critical for password hashing**
+   - `AdminDashboard.Infrastructure.dll`
+   - `AdminDashboard.Domain.dll`
+
+6. **Verify Database Connectivity**
+   ```sql
+   -- Test from server
+   sqlcmd -S YOUR_SERVER -d AdminDashboardDB -Q "SELECT COUNT(*) FROM Users"
+   ```
+
+7. **Enable Detailed Errors (Temporarily)**
+   In `Program.cs`, add before `var app = builder.Build();`:
+   ```csharp
+   builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+   ```
+   
+   And after `var app = builder.Build();`:
+   ```csharp
+   app.UseDeveloperExceptionPage(); // Shows full error details
+   ```
+   **⚠️ Remove these in production!**
+
+### Root Causes:
+
+- **Missing AdminDashboard.Application.dll** - IPasswordHasher not available
+- **Wrong password format in database** - Hash not 64 characters (Base64 encoded 48 bytes)
+- **Database connection failure** - Can't retrieve user data
+- **Dependency injection not configured** - AddApplication() not called
+
+---
+
 ## Pre-Deployment Checklist
 
 Before deploying to production, ensure:
