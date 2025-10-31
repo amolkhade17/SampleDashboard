@@ -140,6 +140,7 @@ BEGIN
     SELECT 
         u.UserId,
         u.Username,
+        u.PasswordHash,
         u.Email,
         u.FullName,
         u.IsActive,
@@ -166,6 +167,7 @@ BEGIN
     SELECT 
         u.UserId,
         u.Username,
+        u.PasswordHash,
         u.Email,
         u.FullName,
         u.IsActive,
@@ -176,6 +178,34 @@ BEGIN
     FROM Users u
     INNER JOIN Roles r ON u.RoleId = r.RoleId
     ORDER BY u.CreatedDate DESC;
+END
+GO
+
+-- SP: Get User By Username (for login)
+IF EXISTS (SELECT * FROM sys.procedures WHERE name = 'SP_GetUserByUsername')
+    DROP PROCEDURE SP_GetUserByUsername;
+GO
+
+CREATE PROCEDURE SP_GetUserByUsername
+    @Username NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    SELECT 
+        u.UserId,
+        u.Username,
+        u.PasswordHash,
+        u.Email,
+        u.FullName,
+        u.IsActive,
+        u.CreatedDate,
+        u.LastLoginDate,
+        u.RoleId,
+        r.RoleName
+    FROM Users u
+    INNER JOIN Roles r ON u.RoleId = r.RoleId
+    WHERE u.Username = @Username;
 END
 GO
 
